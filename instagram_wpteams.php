@@ -1,19 +1,25 @@
 <?php
 /*
-Plugin Name: Instagram For WordPress Teams
+Plugin Name: InstaTeam Instagram Importer
 Plugin URI: http://spark6.com
-Description: Import photos from Instagram to a custom post type.
+Description: This plugin makes it possible to import a whitelist of Instagram users and tagged photos into your Wordpress blog as Custom Post Types, then display those photos anywhere on your site using the shortcode “insta_team photos”.
 Author URI: http://spark6.com
 Author: SPARK6
 Version: 1.0
 */
 
-define("ICP_PLUGIN_NAME", "Instagram For WordPress Teams", true);
+define("ICP_PLUGIN_NAME", "InstaTeam Instagram Importer", true);
 define("ICP_API_KEY", "05d30c376a62455fa2682361b54a142c", true);
 define("ICP_AUTH_URL", "http://www.spark6.com/plugins/instagram_auth", true);
-define("ICP_POST_TYPE", "wpteam_instagram", true);
+define("ICP_POST_TYPE", "insta_team", true);
 
 require_once ('lib/instagram.class.php');
+
+function icp_init(){
+	load_plugin_textdomain( 'insta_team', false, dirname( plugin_basename( __FILE__ ) ) );
+}
+
+add_action('init', 'icp_init');
 
 register_activation_hook(__FILE__, 'icp_activation');
 
@@ -21,9 +27,16 @@ add_action('icp_user_photos', 'icp_get_user_photos');
 add_action('icp_hashtag_photos', 'icp_get_hashtag_photos');
 
 function icp_activation() {
-	wp_schedule_event( current_time( 'timestamp' ), 'twicedaily', 'icp_user_photos');
-	wp_schedule_event( current_time( 'timestamp' ), 'twicedaily', 'icp_hashtag_photos');
-	update_option('icp_import_interval','twicedaily');
+	$settings = get_option( "icp_settings" );
+
+	if($settings['icp_import_interval']===''):
+		$cron_time = 'twicedaily';
+	else:
+		$cron_time = $settings['icp_import_interval'];
+	endif;
+
+	wp_schedule_event( current_time( 'timestamp' ), $cron_time, 'icp_user_photos');
+	wp_schedule_event( current_time( 'timestamp' ), $cron_time, 'icp_hashtag_photos');
 }
 
 register_deactivation_hook(__FILE__, 'icp_deactivation');
@@ -54,7 +67,6 @@ function icp_remove_wp_pointers(){
 }
 
 function icp_register_settings() {
-
 	$settings = get_option( "icp_settings" );
 	if ( empty( $settings ) ) {
 		$settings = array(
@@ -69,14 +81,13 @@ function icp_register_settings() {
 			'icp_user_id' => array(),
 			'icp_hashtag' => array(),
 			'icp_user_public_hashtag' => '',
-			'icp_rename_post_singular' => 'Photo',
-			'icp_rename_post_plural' => 'Photos',
-			'icp_post_status' => 'draft',
+			'icp_rename_post_singular' => __('Photo','insta_team'),
+			'icp_rename_post_plural' => __('Photos','insta_team'),
+			'icp_post_status' => 'pending',
 			'icp_featured_image' => ''
 		);
 		add_option( "icp_settings", $settings, '', 'yes' );
 	}	
-
 }
  
 add_action( 'admin_init', 'icp_register_settings' );
@@ -88,9 +99,9 @@ function icp_shortcode($atts){
 	extract( shortcode_atts(
 		array(
 			'photos' => '12',
-			'lightbox' => 'yes',
+			'lightbox' => 'no',
 			'class' => ' wpteam_instagram_photo',
-			'style' => 'yes'
+			'style' => 'no'
 		), $atts )
 	);	
 
@@ -110,18 +121,34 @@ function icp_shortcode($atts){
 		while ( $icp_photos_query->have_posts() ) {
 			$icp_photos_query->the_post();
 			if ( has_post_thumbnail() ):
-				$icp_html .= '<div class="wp-instagram-item '.$class.'">' . get_the_post_thumbnail(get_the_ID(), 'medium') . '</div>';
+				$thumb_id = get_post_thumbnail_id();
+				$thumb_url = wp_get_attachment_image_src($thumb_id,'full', true);
+				$icp_html .= '<div class="wp-instagram-item '.$class.'"><a href="'. $thumb_url[0].'">' . get_the_post_thumbnail(get_the_ID(), 'medium') . '</a></div>';
 			else:
-				$icp_html .= '<div class="wp-instagram-item '.$class.'">' . get_the_content() . '</div>';
+				$doc = new DOMDocument();
+				@$doc->loadHTML(get_the_content());
+
+				$tags = $doc->getElementsByTagName('img');
+
+				foreach ($tags as $tag) {
+				    $image_url = $tag->getAttribute('src');
+				}
+				$icp_html .= '<div class="wp-instagram-item '.$class.'"><a href="'.$image_url.'">' . get_the_content() . '</a></div>';
 			endif;
 		}
 	    $icp_html .= '</div>';
 	} else {
-		$icp_html = 'No photos found. ';
+		$icp_html = __('No photos found. ', 'insta_team');
 	}
 
 	if($style==='yes'):
-		$icp_html .= '<link href="'.plugins_url( '/css/icp-grid.css', __FILE__ ).'" rel="stylesheet">';
+		wp_enqueue_style( 'icp_grid', plugins_url('css/icp-grid.css', __FILE__) );	
+	endif;
+
+	if($lightbox==='yes'):
+		wp_enqueue_script('icp_magnific_popup', plugins_url('js/jquery.magnific-popup.min.js', __FILE__), array('jquery'), '1.0', true);
+		wp_enqueue_script('icp_magnific_popup_script', plugins_url('js/icp-lightbox.js', __FILE__), array('icp_magnific_popup'), '1.0', true);
+		wp_enqueue_style( 'icp_magnific_popup_css', plugins_url('css/magnific-popup.css', __FILE__) );
 	endif;
 
 	wp_reset_postdata();
@@ -129,11 +156,7 @@ function icp_shortcode($atts){
 	return $icp_html;
 }
 
-add_shortcode('wpteam_instagram', 'icp_shortcode');
-
-function icp_init(){
-	load_plugin_textdomain( 'icpinstagram', false, dirname( plugin_basename( __FILE__ ) ) );
-}
+add_shortcode('insta_team', 'icp_shortcode');
 
 function icp_load_css_js(){
 
@@ -149,7 +172,7 @@ add_action('admin_enqueue_scripts', 'icp_load_css_js');
 function my_add_oneminute( $schedules ) {
 	$schedules['oneminute'] = array(
 		'interval' => 60,
-		'display' => __('Once every 60 seconds')
+		'display' => __('Once every 60 seconds','insta_team')
 	);
 	return $schedules;
 }
@@ -158,7 +181,7 @@ add_filter( 'cron_schedules', 'my_add_oneminute' );
 
 // General Settings Pages
 function icp_plugin_settings() {
-    $settings_page = add_menu_page( __('Instagram WP', 'icpinstagram'), __('Instagram WP', 'icpinstagram'), 'administrator', 'wp_instagram', 'icp_display_settings', plugins_url( 'images/icon.png' , __FILE__ ) );
+    $settings_page = add_menu_page( __('InstaTeam', 'insta_team'), __('InstaTeam', 'insta_team'), 'administrator', 'insta_team', 'icp_display_settings', plugins_url( 'images/icon.png' , __FILE__ ) );
 	add_action( "load-{$settings_page}", 'icp_load_settings_page' );
 }
 
@@ -168,7 +191,7 @@ function icp_load_settings_page() {
 			check_admin_referer( "icp-settings-page" );
 			icp_save_theme_settings();
 			$url_parameters = isset($_GET['tab'])? 'updated=true&tab='.$_GET['tab'] : 'updated=true';
-			wp_redirect(admin_url('admin.php?page=wp_instagram&'.$url_parameters));
+			wp_redirect(admin_url('admin.php?page=insta_team&'.$url_parameters));
 			exit;
 		}
 }
@@ -178,7 +201,7 @@ function icp_save_theme_settings() {
 	global $pagenow;
 	$settings = get_option( "icp_settings" );
 	
-	if ( $pagenow == 'admin.php' && $_GET['page'] == 'wp_instagram' ){ 
+	if ( $pagenow == 'admin.php' && $_GET['page'] == 'insta_team' ){ 
 		if ( isset ( $_GET['tab'] ) )
 	        $tab = $_GET['tab']; 
 	    else
@@ -192,24 +215,24 @@ function icp_save_theme_settings() {
 				$settings['icp_public_hashtag'] = $_POST['icp_public_hashtag'];
 			break; 
 	        case 'post_type' : 
+	        	
+	        	$old_interval = $settings['icp_import_interval'];
+
 				$settings['icp_post_type'] 				= $_POST['icp_post_type'];
 				$settings['icp_rename_post_singular'] 	= $_POST['icp_rename_post_singular'];
 				$settings['icp_rename_post_plural'] 	= $_POST['icp_rename_post_plural'];
-			break;
-			case 'options' : 
 
-				$old_interval = $settings['icp_import_interval'];
+				$settings['icp_post_status']	  = $_POST['icp_post_status'];
+				$settings['icp_featured_image']	  = $_POST['icp_featured_image'];
+				$settings['icp_import_limit']	  = $_POST['icp_import_limit'];
+				$settings['icp_import_interval']  = $_POST['icp_import_interval'];
+
 				if($old_interval!==$_POST['icp_import_interval']):
 					wp_clear_scheduled_hook('icp_user_photos');
 					wp_clear_scheduled_hook('icp_hashtag_photos');
 					wp_schedule_event( current_time( 'timestamp' ), $_POST['icp_import_interval'], 'icp_user_photos');
 					wp_schedule_event( current_time( 'timestamp' ), $_POST['icp_import_interval'], 'icp_hashtag_photos');
 				endif;
-
-				$settings['icp_post_status']	  = $_POST['icp_post_status'];
-				$settings['icp_featured_image']	  = $_POST['icp_featured_image'];
-				$settings['icp_import_limit']	  = $_POST['icp_import_limit'];
-				$settings['icp_import_interval']  = $_POST['icp_import_interval'];
 
 			break;
 	    }
@@ -220,26 +243,25 @@ function icp_save_theme_settings() {
 
 
 function icp_admin_tabs( $current = 'homepage' ) { 
-    $tabs = array( 'homepage' => 'Hashtags & Users', 'post_type' => 'Post Type Configuration', 'options' => 'Plugin Options', 'unlink'=> 'Unlink Account', 'help' => 'Help' ); 
+    $tabs = array( 'homepage' => __('Hashtags & Users','insta_team') , 'post_type' => __('Import Options','insta_team'), 'shortcode'=> __('Shortcodes','insta_team'),  'unlink'=> __('Unlink Account','insta_team'), 'help' => __('Help','insta_team') ); 
     $links = array();
     echo '<h2 class="nav-tab-wrapper icpNavTab">';
     foreach( $tabs as $tab => $name ){
         $class = ( $tab == $current ) ? ' nav-tab-active' : '';
-        echo "<a class='nav-tab$class' href='?page=wp_instagram&tab=$tab'>$name</a>";
-        
+        echo "<a class='nav-tab$class' href='?page=insta_team&tab=$tab'>$name</a>";
     }
     echo '</h2>';
 }
 
-add_filter( 'icp_admin_pointers-toplevel_page_wp_instagram', 'icp_register_pointer_welcome' );
+add_filter( 'icp_admin_pointers-toplevel_page_insta_team', 'icp_register_pointer_welcome' );
 function icp_register_pointer_welcome( $p ) {
     $p['wpteam_instagram'] = array(
         'target' => '#icpwelcomeTitle',
         'options' => array(
             'content' => sprintf( '<h3> %s </h3> <p> %s </p>',
-                __( 'Thanks for choosing Instagram For WordPress Teams!' ,'plugindomain'),
+                __( 'Thanks for choosing InstaTeam!' ,'insta_team'),
                 __( '<p><b>About This Plugin</b><br />
-This plugin was created by SPARK6, is a creative agency located in Santa Monica, Ca. We believe in leveraging technology to reduce human suffering. Learn more at <a href="http://www.spark6.com" target="_blank">www.spark6.com</a>. If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@spark6.com">hello@spark6.com</a>.</p>
+This plugin was created by SPARK6, a creative agency located in Santa Monica, Ca. We believe in leveraging technology to reduce human suffering. Learn more at <a href="http://www.spark6.com" target="_blank">www.spark6.com</a>. If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@spark6.com">hello@spark6.com</a>.</p>
 
 <p><b>Like this plugin?</b><br />
 If you like this plugin, please rate it 5 star on Wordpress.org! We hope you do!</p>
@@ -252,18 +274,21 @@ If you would like to keep up to date regarding Instagram For WordPress Teams plu
 <!-- Begin MailChimp Signup Form -->
 
 <div id="mc_embed_signup">
-<form action="http://spark6.us8.list-manage.com/subscribe/post?u=3f570c3013887ad5074dec610&amp;id=8456f2c27c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" style="padding:15px;" class="validate" target="_blank" novalidate>
-	
-	<input style="width:100%;" type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
-	<br><br>
-    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-    <div style="position: absolute; left: -5000px;"><input type="text" name="b_3f570c3013887ad5074dec610_8456f2c27c" value=""></div>
-	<div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-</form>
+
+	<form id="mc-form" style="padding:15px;" action="http://spark6.us8.list-manage.com/subscribe/post?u=3f570c3013887ad5074dec610&amp;id=8456f2c27c" method="post">
+		<p class="mc-response"></p>
+	    <input id="mce-EMAIL" name="EMAIL" type="email" placeholder="email">
+	    <label for="mce-EMAIL"></label>
+
+	    <br><br>
+	    <div style="position: absolute; left: -5000px;"><input type="text" name="b_3f570c3013887ad5074dec610_8456f2c27c" value=""></div>
+	    <input type="button" id="mcSubmit" class="button" value="Submit">
+	</form>
+
 </div>
 
 <!--End mc_embed_signup-->
-	','icpinstagram')
+	','insta_team')
             ),
             'position' => array( 'edge' => 'top', 'align' => 'left' )
         )
@@ -308,7 +333,7 @@ function icp_display_settings() {
 					$updated = update_option( "icp_settings", $settings );
 		?>
 			<div id="setting-error-settings_updated" class="updated settings-error"> 
-				<p><strong><?php echo __( 'Your instagram access token was deleted, but you also need to revoke permissions from this plugin, <a href="https://instagram.com/accounts/manage_access" target="_blank">click here</a> and revoke access to the "Instagram for Wordpress Teams" app.', 'icpinstagram' ); ?></strong></p>
+				<p><strong><?php _e('Your instagram access token was deleted, but you also need to revoke permissions from this plugin, <a href="https://instagram.com/accounts/manage_access" target="_blank">click here</a> and revoke access to the "Instagram for Wordpress Teams" app.', 'insta_team' ); ?></strong></p>
 			</div>
 		<?php
 				endif;
@@ -320,7 +345,7 @@ function icp_display_settings() {
 			if ( 'true' == esc_attr( $_GET['updated'] ) ):
 		?>
 		<div id="setting-error-settings_updated" class="updated settings-error"> 
-			<p><strong><?php echo __( 'Settings saved.', 'icpinstagram' ); ?></strong></p>
+			<p><strong><?php _e('Settings saved.', 'insta_team' ); ?></strong></p>
 		</div>
 		<?php
 			endif;
@@ -339,11 +364,11 @@ function icp_display_settings() {
 					$updated = update_option( "icp_settings", $settings );
 			?>
 				<div id="setting-error-settings_updated" class="updated settings-error"> 
-					<p><strong><?php echo __( 'Authorization succeeded!', 'icpinstagram' ); ?></strong></p>
+					<p><strong><?php _e( 'Authorization succeeded!', 'insta_team' ); ?></strong></p>
 				</div>
 			<?php else: ?>
 				<div id="setting-error-settings_updated" class="error settings-error"> 
-					<p><strong><?php echo __( 'There was an error, try again...', 'icpinstagram' ); ?></strong></p>
+					<p><strong><?php _e( 'There was an error, try again...', 'insta_team' ); ?></strong></p>
 				</div>
 			<?php endif; ?>
 		<?php endif; ?>
@@ -353,8 +378,8 @@ function icp_display_settings() {
 				$icp_redirect_url = icp_get_current_url();
 
 		?>
-			<p><?php echo __( 'Click to be taken to Instagram\'s site to securely authorize this plugin for use with your account.', 'icpinstagram' ); ?></p>
-			<a href="<?php echo ICP_AUTH_URL; ?>?redirect_url=<?php echo $icp_redirect_url; ?>" target="_self" class="button-primary authenticate"><?php echo __( 'Secure Authentication', 'icpinstagram' ); ?></a>
+			<p><?php _e( 'Click to be taken to Instagram\'s site to securely authorize this plugin for use with your account.', 'insta_team' ); ?></p>
+			<a href="<?php echo ICP_AUTH_URL; ?>?redirect_url=<?php echo $icp_redirect_url; ?>" target="_self" class="button-primary authenticate"><?php _e( 'Secure Authentication', 'insta_team' ); ?></a>
 		<?php
 			else:
 		?>
@@ -364,12 +389,12 @@ function icp_display_settings() {
 			?>
 
 			<div id="poststuff">
-				<form class="icp_settings_form" method="post" action="<?php admin_url( 'admin.php?page=wp_instagram' ); ?>">
+				<form class="icp_settings_form" method="post" action="<?php admin_url( 'admin.php?page=insta_team' ); ?>">
 
 				<?php
 					wp_nonce_field( "icp-settings-page" ); 
 				
-					if ( $pagenow == 'admin.php' && $_GET['page'] == 'wp_instagram' ){ 
+					if ( $pagenow == 'admin.php' && $_GET['page'] == 'insta_team' ){ 
 					
 						if ( isset ( $_GET['tab'] ) ) $tab = $_GET['tab']; 
 						else $tab = 'homepage'; 
@@ -384,9 +409,9 @@ function icp_display_settings() {
 					?>
 								<tr valign="top">
 									<td colspan="2">
-										<h2>Team &amp; Tags</h2>
+										<h2><?php _e('Team &amp; Tags','insta_team'); ?></h2>
 										<hr>
-										<p>This is where your Instagram uses are managed. Click <span id="icpUserLabel">"Add New Team Member"</span> to add <span id="icpUserNumber">your first one</span>.</p>
+										<p><?php _e('This is where your Instagram users are managed. Click <span id="icpUserLabel">"Add New Team Member"</span> to add <span id="icpUserNumber">your first one</span>.','insta_team'); ?></p>
 									</td>
 								</tr>
 					<?php
@@ -409,24 +434,26 @@ function icp_display_settings() {
 
 										<table class="form-table icp-hover-table"> 
 											<tr valign="top">
-												<td scope="row"><label>Instagram Username:</label></th>
+												<td scope="row"><label><?php _e('Instagram Username:','insta_team'); ?></label></th>
 												<td>
 													<input name="icp_user[]" type="text" id="icp_user" class="regular-text icp-float-left icp-UserValidation" value="<?php echo $user; ?>" placeholder="johndoe">
 													<div class="icp-live-icon">
 														<img src="<?php echo plugins_url( '/images/loading.gif', __FILE__ ) ?>" class="icp-loading hidden" />
-														<img src="<?php echo plugins_url( '/images/yes.gif', __FILE__ ) ?>" class="icp-yes hidden" />
+														<img src="<?php echo plugins_url( '/images/yes.png', __FILE__ ) ?>" class="icp-yes hidden" />
 														<img src="<?php echo plugins_url( '/images/no.png', __FILE__ ) ?>" class="icp-no hidden" />
+														<img src="<?php echo plugins_url( '/images/alert.png', __FILE__ ) ?>" class="icp-alert hidden" />
 													</div>
 													<input name="icp_user_id[]" type="hidden" id="icp_user_id" value="<?php echo $user_id; ?>">
 													<div class="clearfix"></div>
 													<a href="#" class="icp-trash"><img src="<?php echo plugins_url( '/images/trash.png', __FILE__ ) ?>"  /></a>
+													<p class="description hidden icp-message"><?php _e( 'We can\'t import photos from this account because it is private', 'insta_team' ); ?></p>
 												</td>
 											</tr>
 											<tr valign="top" >
-												<td scope="row"><label>Import photos tagged:</label></th>
+												<td scope="row"><label><?php _e('Import photos tagged:','insta_team'); ?></label></th>
 												<td>
-													<input name="icp_hashtag[]" type="text" id="icp_hashtag" class="regular-text" value="<?php echo $hashtag; ?>" placeholder="cats,dogs,parrots">
-													<p class="description"><?php echo __( 'Insert the hashtags without # and separated by comma, don\'t use blank spaces.', 'icpinstagram' ); ?></p>
+													<input name="icp_hashtag[]" type="text" id="icp_hashtag" class="regular-text" value="<?php echo $hashtag; ?>" placeholder="example: cats,dogs,parrots">
+													<p class="description"><?php _e( 'Insert the hashtags without # and separated by comma, don\'t use blank spaces.', 'insta_team' ); ?></p>
 												</td>
 											</tr>
 											
@@ -452,24 +479,26 @@ function icp_display_settings() {
 
 										<table class="form-table icp-hover-table"> 
 											<tr valign="top">
-												<td scope="row"><label>Instagram Username:</label></th>
+												<td scope="row"><label><?php _e('Instagram Username:','insta_team'); ?></label></th>
 												<td>
 													<input name="icp_user[]" type="text" id="icp_user" class="regular-text icp-float-left icp-UserValidation" value="<?php echo $user; ?>" placeholder="johndoe">
 													<div class="icp-live-icon">
 														<img src="<?php echo plugins_url( '/images/loading.gif', __FILE__ ) ?>" class="icp-loading hidden" />
-														<img src="<?php echo plugins_url( '/images/yes.gif', __FILE__ ) ?>" class="icp-yes hidden" />
+														<img src="<?php echo plugins_url( '/images/yes.png', __FILE__ ) ?>" class="icp-yes hidden" />
 														<img src="<?php echo plugins_url( '/images/no.png', __FILE__ ) ?>" class="icp-no hidden" />
+														<img src="<?php echo plugins_url( '/images/alert.png', __FILE__ ) ?>" class="icp-alert hidden" />
 													</div>
 													<input name="icp_user_id[]" type="hidden" id="icp_user_id" value="<?php echo $user_id; ?>">
 													<div class="clearfix"></div>
 													<a href="#" class="icp-trash"><img src="<?php echo plugins_url( '/images/trash.png', __FILE__ ) ?>"  /></a>
+													<p class="description hidden icp-message"><?php echo __( 'We can\'t import photos from this account because it is private', 'icpinstagram' ); ?></p>
 												</td>
 											</tr>
 											<tr valign="top" >
-												<td scope="row"><label>Import photos tagged:</label></th>
+												<td scope="row"><label><?php _e('Import photos tagged:','insta_team'); ?></label></th>
 												<td>
-													<input name="icp_hashtag[]" type="text" id="icp_hashtag" class="regular-text" value="<?php echo $hashtag; ?>" placeholder="cats,dogs,parrots">
-													<p class="description"><?php echo __( 'Insert the hashtags without # and separated by comma, don\'t use blank spaces.', 'icpinstagram' ); ?></p>
+													<input name="icp_hashtag[]" type="text" id="icp_hashtag" class="regular-text" value="<?php echo $hashtag; ?>" placeholder="example: cats,dogs,parrots">
+													<p class="description"><?php _e( 'Insert the hashtags without # and separated by comma, don\'t use blank spaces.', 'insta_team' ); ?></p>
 												</td>
 											</tr>
 											
@@ -491,17 +520,17 @@ function icp_display_settings() {
 								<tr valign="top">
 									<td  scope="row">
 										<?php if($icp_user_fields==$active_users): ?>
-										<a href="#" class="button-secondary" id="icp-addUser">Add New Team Member</a>
+										<a href="#" class="button-secondary" id="icp-addUser"><?php _e( 'Add New Team Member', 'insta_team' ); ?></a>
 										<?php else: ?>
-										<a href="#" class="button-secondary" id="icp-addUser">Add Another Team Member</a>
+										<a href="#" class="button-secondary" id="icp-addUser"><?php _e( 'Add Another Team Member', 'insta_team' ); ?></a>
 										<?php endif; ?>
 									</td>
 								</tr>
 								<tr valign="top">
 									<td colspan="2">
-										<h2>Public Tags</h2>
+										<h2><?php _e( 'Public Tags', 'insta_team' ); ?></h2>
 										<hr>
-										<p>Tags added here will import any photo found on Instagram matching these tags, even if they are not owned by a team member above. We recommend setting “Default Post Status” (under the Import Options tab) to “Draft”, “Pending” or “Private” if you use this option. </p>
+										<p><?php _e( 'Tags added here will import any photo found on Instagram matching these tags, even if they are not owned by a team member above. We recommend setting "Default Post Status" (under the Import Options tab) to "Draft", "Pending" or "Private" if you use this option.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
 								<tr valign="top">
@@ -509,11 +538,11 @@ function icp_display_settings() {
 										<table class="form-table">
 											<tr valign="top">
 												<td scope="row">
-													<label for="icp_hashtag">Publicly Searchable Tags:</label>
+													<label for="icp_hashtag"><?php _e('Publicly Searchable Tags:', 'insta_team' ); ?></label>
 												</td>
 												<td>
-													<input name="icp_public_hashtag" type="text" id="icp_public_hashtag" class="regular-text" value="<?php echo $icp_public_hashtag; ?>" placeholder="cats,dogs,parrots">
-													<p class="description"><?php echo __( 'Insert the hashtags without # and separated by comma, don\'t use blank spaces.', 'icpinstagram' ); ?></p>
+													<input name="icp_public_hashtag" type="text" id="icp_public_hashtag" class="regular-text" value="<?php echo $icp_public_hashtag; ?>" placeholder="example: cats,dogs,parrots">
+													<p class="description"><?php _e( 'Insert the hashtags without # and separated by comma, don\'t use blank spaces.', 'insta_team' ); ?></p>
 												</td>
 											</tr>
 											<tr valign="top">
@@ -530,6 +559,12 @@ function icp_display_settings() {
 							break; 
 							case 'post_type' : 
 								?>
+								<tr valign="top">
+									<th colspan="2">
+										<h2><?php _e('Import Post Rules', 'insta_team' ); ?></h2>
+										<hr>
+									</th>
+								</tr>
 								<tr>
 									<th scope="row"><label for="icp_post_type"><?php echo __( 'Import to Post Type', 'icpinstagram' ); ?></label></th>
 									<td>
@@ -548,132 +583,165 @@ function icp_display_settings() {
 												endforeach;
 											?>
 										</select>
-										<p class="description"><?php echo __( 'Choose the post type that all photos will be imported as.', 'icpinstagram' ); ?></p>
+										<p class="description"><?php _e( 'Choose the post type that all photos will be imported as.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
 								<tr valign="top">
-									<th scope="row"><label for="icp_rename_post_singular">Rename Post Type Singular:</label></th>
-									<td>
-										<input name="icp_rename_post_singular" type="text" id="icp_rename_post_singular" class="regular-text" value="<?php echo $icp_post_singular; ?>" placeholder="Photo">
-									</td>
-								</tr>
-								<tr valign="top">
-									<th scope="row"><label for="icp_rename_post_plural">Rename Post Type Plural:</label></th>
-									<td>
-										<input name="icp_rename_post_plural" type="text" id="icp_rename_post_plural" class="regular-text" value="<?php echo $icp_post_plural; ?>" placeholder="Photos">
-									</td>
-								</tr>
-								<tr valign="top">
-									<td colspan="2">
+									<th colspan="2">
+										<h2><?php _e( 'Import Image Rules', 'insta_team' ); ?></h2>
 										<hr>
-									</td>
+									</th>
 								</tr>
-								<?php
-							break;
-							case 'options' : 
-								?>
+
 								<tr valign="top">
-									<th scope="row"><label for="icp_post_status"><?php echo __( 'Default post status', 'icpinstagram' ); ?></label></th>
+									<th scope="row"><label for="icp_post_status"><?php _e( 'Default post status', 'insta_team' ); ?></label></th>
 									<td>
 										<select name="icp_post_status" id="icp_post_status">
 											<?php
 												$draft_status = $icp_post_status;
 											?>
-											<option value="draft" <?php selected( $draft_status, 'draft' ); ?>>
-												<?php _e( 'Draft', 'icpinstagram' ); ?>
-											</option>
 											<option value="publish" <?php selected( $draft_status, 'publish' ); ?>>
-												<?php _e( 'Published', 'icpinstagram' ); ?>
+												<?php _e( 'Published - Automatically post to website', 'insta_team' ); ?>
 											</option>
 											<option value="pending" <?php selected( $draft_status, 'pending' ); ?>>
-												<?php _e( 'Pending', 'icpinstagram' ); ?>
+												<?php _e( 'Pending - Wait for moderation', 'insta_team' ); ?>
 											</option>
 											<option value="private" <?php selected( $draft_status, 'private' ); ?>>
-												<?php _e( 'Private', 'icpinstagram' ); ?>
+												<?php _e( 'Private - Must be logged in to view', 'insta_team' ); ?>
 											</option>
 										</select>
-										<p class="description"><?php echo __( 'Choose the post status of all the imported photos.', 'icpinstagram' ); ?></p>
+										<p class="description"><?php _e( 'Choose the post status of all the imported photos.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
 								<tr valign="top">
-									<th scope="row"><?php echo __( 'Featured Image?', 'icpinstagram' ); ?></th>
+									<th scope="row"><?php _e( 'Featured Image?', 'insta_team' ); ?></th>
 									<td>
 										<label for="icp_featured_image">
 											<input name="icp_featured_image" type="checkbox" id="icp_featured_image" value="yes" <?php checked( $icp_featured_image, 'yes'); ?>>
-											<?php echo __( 'Save imported image as featured image.', 'icpinstagram' ); ?>
+											<?php _e( 'Save imported image as featured image.', 'insta_team' ); ?>
 										</label>
 									</td>
 								</tr>
 								<tr valign="top">
-									<th scope="row"><label for="icp_import_limit"><?php echo __( 'Import Quantity', 'icpinstagram' ); ?></label></th>
+									<th scope="row"><label for="icp_import_limit"><?php _e( 'Import Quantity', 'insta_team' ); ?></label></th>
 									<td>
 										<select name="icp_import_limit" id="icp_import_limit">
 											<?php
 												$limit_saved = $icp_import_limit;
 											?>
 											<option value="20" <?php selected( $limit_saved, '20' ); ?>>
-												<?php _e( '20 Photos', 'icpinstagram' ); ?>
+												<?php _e( '20 Photos', 'insta_team' ); ?>
 											</option>
 											<option value="40" <?php selected( $limit_saved, '40' ); ?>>
-												<?php _e( '40 Photos', 'icpinstagram' ); ?>
+												<?php _e( '40 Photos', 'insta_team' ); ?>
 											</option>
 											<option value="60" <?php selected( $limit_saved, '60' ); ?>>
-												<?php _e( '60 Photos', 'icpinstagram' ); ?>
+												<?php _e( '60 Photos', 'insta_team' ); ?>
 											</option>
 											<option value="80" <?php selected( $limit_saved, '80' ); ?>>
-												<?php _e( '80 Photos', 'icpinstagram' ); ?>
+												<?php _e( '80 Photos', 'insta_team' ); ?>
 											</option>
 											<option value="100" <?php selected( $limit_saved, '100' ); ?>>
-												<?php _e( '100 Photos', 'icpinstagram' ); ?>
+												<?php _e( '100 Photos', 'insta_team' ); ?>
 											</option>
 											<option value="200" <?php selected( $limit_saved, '200' ); ?>>
-												<?php _e( '200 Photos', 'icpinstagram' ); ?>
+												<?php _e( '200 Photos', 'insta_team' ); ?>
 											</option>
 										</select>
-										<p class="description"><?php echo __( 'Choose the number of items to query per API call.', 'icpinstagram' ); ?></p>
+										<p class="description"><?php _e( 'Choose the number of items to query per API call.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
 								<tr valign="top">
-									<th scope="row"><label for="icp_import_interval"><?php echo __( 'Import Interval', 'icpinstagram' ); ?></label></th>
+									<th scope="row"><label for="icp_import_interval"><?php _e( 'Import Interval', 'insta_team' ); ?></label></th>
 									<td>
 										<select name="icp_import_interval" id="icp_import_interval">
 											<?php
 												$import_interval = $icp_import_interval;
 											?>
 											<option value="oneminute" <?php selected( $import_interval, 'oneminute' ); ?>>
-												<?php _e( 'Every Minute', 'icpinstagram' ); ?>
+												<?php _e( 'Every Minute', 'insta_team' ); ?>
 											</option>
 											<option value="hourly" <?php selected( $import_interval, 'hourly' ); ?>>
-												<?php _e( 'Once Hourly', 'icpinstagram' ); ?>
+												<?php _e( 'Once Hourly', 'insta_team' ); ?>
 											</option>
 											<option value="twicedaily" <?php selected( $import_interval, 'twicedaily' ); ?>>
-												<?php _e( 'Twice Daily', 'icpinstagram' ); ?>
+												<?php _e( 'Twice Daily', 'insta_team' ); ?>
 											</option>
 											<option value="daily" <?php selected( $import_interval, 'daily' ); ?>>
-												<?php _e( 'Once Daily', 'icpinstagram' ); ?>
+												<?php _e( 'Once Daily', 'insta_team' ); ?>
 											</option>
 										</select>
 									</td>
 								</tr>
 								<?php
 							break;
+							
+							case 'shortcode' : 
+								$no_save = true;
+								?>
+								<tr valign="top">
+									<th scope="row"><label><?php _e( 'Overview', 'insta_team' ); ?></label></th>
+									<td>
+										<p><?php _e( 'This plugin supports <a href="http://codex.wordpress.org/Shortcode_API" target="_blank">shortcodes</a>. Include the shortcode [insta_team] in any page where you want your photo grid to appear.', 'insta_team' ); ?></p>
+									</td>
+								</tr>
+								
+								<tr valign="top">
+									<th scope="row"><label><?php _e( 'Controlling the number of photos to display', 'insta_team' ); ?></label></th>
+									<td>
+										<p><?php _e( 'There is an option to limit the number of photos that appear in the grid (showing the newest first). You can enable this functionality by including photos=x in the shortcode.', 'insta_team' ); ?></p>
+										 
+										<p><?php _e( 'Example: <br /><br /><b>[insta_team photos=12]', 'insta_team' ); ?></b></p><br />
+									</td>
+								</tr>
+								
+								<tr valign="top">
+									<th scope="row"><label><?php _e( 'Adding a CSS class to the shortcode', 'insta_team' ); ?></label></th>
+									<td>		 
+										<p><?php _e( 'There is also an option to add a custom class to the images. You can enable this by adding class=somecustomclass to the shortcode. A custom class is helpful for adding things like floats and other CSS to support responsive grids.', 'insta_team' ); ?></p>
+										 
+										<p><?php _e( 'Example: <br /><br /><b>[insta_team photos=12 class=some_custom_class]', 'insta_team' ); ?></b></p>
+									</td>
+								</tr>
+								<?php
+							break;
+							
 							case 'help' : 
 								$no_save = true;
 							?>	
 								<tr valign="top">
-									<th scope="row"><label>How to use Shortcodes:</label></th>
+									<th scope="row"><label><?php _e( 'Product Suggestions', 'insta_team' ); ?></label></th>
 									<td>
-										<p>Include the shortcode <b>[wpteam_instagram]</b> in the page you want to show the grid.</p><br/>
-										<p>There is an option to limit the number of photos that appear on the page (showing the newest first). You can enable this functionality by include photos=x in the shortcode. Example: <b>[wpteam_instagram photos=12]</b></p><br />
-										<p>There is also an option to add a custom class to the images. You can enable this by adding class=somecustomclass to the shortcode. Example: <b>[wpteam_instagram photos=12 class=somecustomclass]</b></p>
+										<p><?php _e( 'If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@spark6.com">hello@spark6.com</a>.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
-								<th scope="row"><label>About This Plugin:</label></th>
+								<tr valign="top">
+									<th scope="row"><label><?php _e( 'Support Forums', 'insta_team' ); ?></label></th>
 									<td>
-										<p>This plugin was created by SPARK6, is a creative agency located in Santa Monica, Ca. We believe in leveraging technology to reduce human suffering. Learn more at <a href="http://www.spark6.com" target="_blank">www.spark6.com</a>. If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@spark6.com">hello@spark6.com</a>.</p>
+										<p><?php _e( 'If you need support please check out the [Plugin Forums for InstaTeam] on <a href="http://wordpress.org" target="_blank">Wordpress.org</a>', 'insta_team' ); ?></p>
 									</td>
 								</tr>
-								
+								<tr valign="top">
+									<th scope="row"><label><?php _e( 'FAQ', 'insta_team' ); ?></label></th>
+									<td>
+										<p><?php _e( 'You can also check out the [FAQ]', 'insta_team' ); ?></p>
+									</td>
+								</tr>
+								<tr valign="top">
+									<th scope="row"><label><?php _e( 'About This Plugin:', 'insta_team' ); ?></label></th>
+									<td>
+										<p><?php _e( 'This plugin was created and is maintained by SPARK6, is a creative agency located in Santa Monica, Ca. We believe in leveraging technology to further social innovation. Learn more at <a href="http://www.spark6.com/about-us" target="_blank">www.spark6.com</a> and be sure to Like Us on <a href="https://www.facebook.com/spark6agency" target="_blank">Facebook</a>.', 'insta_team' ); ?></p>
+									</td>
+								</tr>
+								<tr valign="top">
+									<th scope="row"><label><?php _e( 'License Info', 'insta_team' ); ?></label></th>
+									<td>
+										<p><?php _e( 'We are releasing this plugin under the same license that WordPress is released on: GPLv2 (or later) from the <a href="http://www.fsf.org/" target="_blank">Free Software Foundation</a>. A copy of the license is included with every copy of WordPress, but you can also read <a href="http://www.gnu.org/licenses/gpl-2.0.html" target="_blank">the text of the license here</a>.', 'insta_team' ); ?></p>
+ 
+										<p><?php _e( 'Part of this license outlines requirements for derivative works, such as plugins or themes. Derivatives of this plugin inherit the GPL license. <a href="http://www.drupal.org/" target="_blank">Drupal</a>, which has the same GPL license as WordPress, has an excellent page on licensing as it applies to themes and modules (their word for plugins).', 'insta_team' ); ?></p>
+									</td>
+								</tr>
+										
 								<tr valign="top">
 									<td colspan="2">
 										<hr>
@@ -686,11 +754,11 @@ function icp_display_settings() {
 							?>	
 								<tr valign="top">
 									<td colspan="2">
-										<h2>Unlink Your Instagram Account</h2>
+										<h2><?php _e( 'Unlink Your Instagram Account', 'insta_team' ); ?></h2>
 										<hr>
-										<p>Use this screen to unlink your Instagram Account. If you proceed no new images will be pullsed from Instagram and you will need to reactive an account.</p>
+										<p><?php _e( 'Use this screen to unlink your Instagram Account. If you proceed no new images will be pulled from Instagram and you will need to reactivate an account.', 'insta_team' ); ?></p>
 										<br><br>
-										<a href="admin.php?page=wp_instagram&unlink=true" id="icp-unlinkAccount" class="button-primary red">Unlink Instagram Account</a>
+										<a href="admin.php?page=insta_team&unlink=true" id="icp-unlinkAccount" class="button-primary red"><?php _e( 'Unlink Instagram Account', 'insta_team' ); ?></a>
 									</td>
 								</tr>
 								
@@ -703,7 +771,7 @@ function icp_display_settings() {
 					?>
 					<p class="submit" style="clear: both;">
 						<?php if($no_save!==true): ?>
-						<input type="submit" name="Submit" id="icp-submitForm"  class="button-primary" value="Save Settings" />
+						<input type="submit" name="Submit" id="icp-submitForm"  class="button-primary" value="<?php _e( 'Save Settings', 'insta_team' ); ?>" />
 						<?php endif; ?>
 						<input type="hidden" name="icp-settings-submit" value="Y" />
 					</p>
@@ -768,8 +836,18 @@ function icp_check_user_id() {
 
     foreach($json->data as $user):
         if($user->username === $username){
-            echo $user->id;
-            die();
+        	$instagram = new Instagram(ICP_API_KEY);
+    		$instagram->setAccessToken( $token );
+
+    		$query_user = $instagram->getUserRelationship($user->id);
+    		if($query_user->data->target_user_is_private===false):
+    			echo $user->id;
+            	die();
+    		else:
+    			echo 'alert';
+            	die();
+    		endif;
+            
         }
     endforeach;
 
@@ -819,9 +897,9 @@ function icp_get_user_photos(){
 		   		for($i=1; $i<=$page_num; $i++):
 
 		   			if($next_id===''): 
-
+		   				
 		   				foreach ($media->data as $data):
-
+		   					
 							$new_post = array();							
 			                $new_post["id"] = $data->id;		
 			               
@@ -832,15 +910,16 @@ function icp_get_user_photos(){
 				                if(!empty($hashtags_per_user)):
 
 					                foreach($hashtags_per_user as $hashtag):
+					                	
+
 					                	$hashtag = '#'.strtolower($hashtag);
 
 					                	if (strpos($photo_desc, $hashtag) !== false):
-									    	
+					                		
 											(string) $sql = "SELECT meta_id FROM ".$wpdb->postmeta." WHERE meta_value = '".$new_post["id"]."' AND meta_key = 'id'";
 
 											if($wpdb->get_var($sql) == NULL):
-
-												$new_post["post_date"]   	= date('Y-m-d H:i:s');
+												
 							                	$new_post["post_title"]  	= strip_tags($data->caption->text);
 							                	$new_post["post_content"]	= '<img src="'.$data->images->standard_resolution->url.'" />';
 							                	$new_post["post_type"]    	= $settings['icp_post_type'];
@@ -849,6 +928,7 @@ function icp_get_user_photos(){
 							                	$post_id = wp_insert_post($new_post);
 
 							                	add_post_meta($post_id, $meta_key = "id", $meta_value=$new_post["id"], $unique=TRUE);
+							                	add_post_meta($post_id, 'instateam_created_time', $data->created_time, true);
 
 							                	if($upload_images==='yes'):
 							                		$photoURL = icp_upload_image($data->images->standard_resolution->url, $post_id);
@@ -871,8 +951,7 @@ function icp_get_user_photos(){
 				                	(string) $sql = "SELECT meta_id FROM ".$wpdb->postmeta." WHERE meta_value = '".$new_post["id"]."' AND meta_key = 'id'";
 
 									if($wpdb->get_var($sql) == NULL):
-
-										$new_post["post_date"]   	= date('Y-m-d H:i:s');
+										
 					                	$new_post["post_title"]  	= strip_tags($data->caption->text);
 					                	$new_post["post_content"]	= '<img src="'.$data->images->standard_resolution->url.'" />';
 					                	$new_post["post_type"]    	= $settings['icp_post_type'];
@@ -881,6 +960,7 @@ function icp_get_user_photos(){
 					                	$post_id = wp_insert_post($new_post);
 
 					                	add_post_meta($post_id, $meta_key = "id", $meta_value=$new_post["id"], $unique=TRUE);
+					                	add_post_meta($post_id, 'instateam_created_time', $data->created_time, true);
 
 					                	if($upload_images==='yes'):
 					                		$photoURL = icp_upload_image($data->images->standard_resolution->url, $post_id);
@@ -900,24 +980,26 @@ function icp_get_user_photos(){
 							endif;
 		               
 			            endforeach;
+
 		   			else: 
 
     					$media = $instagram->pagination($media);
 
 						foreach ($media->data as $data):
-
+							
 							$new_post = array();							
 			                $new_post["id"]     		= $data->id;	
 			                
 			                if($data->type === 'image'):		            	
 
-				                // If we don't find matches with the hashtag break the loop.
 				                $photo_desc = strtolower($data->caption->text);
 
 				                if(!empty($hashtags_per_user)):
 
 					                foreach($hashtags_per_user as $hashtag):
 					                	$hashtag = '#'.strtolower($hashtag);
+
+					                	$hashtag_photo_counter++;
 					                	
 					                	if (strpos($photo_desc, $hashtag) !== false):
 									    	
@@ -925,7 +1007,6 @@ function icp_get_user_photos(){
 
 											if($wpdb->get_var($sql) == NULL):
 
-												$new_post["post_date"]   	= date('Y-m-d H:i:s');
 							                	$new_post["post_title"]  	= strip_tags($data->caption->text);
 							                	$new_post["post_content"]	= '<img src="'.$data->images->standard_resolution->url.'" />';
 							                	$new_post["post_type"]    	= $settings['icp_post_type'];
@@ -934,6 +1015,7 @@ function icp_get_user_photos(){
 							                	$post_id = wp_insert_post($new_post);
 
 							                	add_post_meta($post_id, $meta_key = "id", $meta_value=$new_post["id"], $unique=TRUE);
+							                	add_post_meta($post_id, 'instateam_created_time', $data->created_time, true);
 
 							                	if($upload_images==='yes'):
 							                		$photoURL = icp_upload_image($data->images->standard_resolution->url, $post_id);
@@ -957,7 +1039,6 @@ function icp_get_user_photos(){
 
 									if($wpdb->get_var($sql) == NULL):
 
-										$new_post["post_date"]   	= date('Y-m-d H:i:s');
 					                	$new_post["post_title"]  	= strip_tags($data->caption->text);
 					                	$new_post["post_content"]	= '<img src="'.$data->images->standard_resolution->url.'" />';
 					                	$new_post["post_type"]    	= $settings['icp_post_type'];
@@ -966,6 +1047,7 @@ function icp_get_user_photos(){
 					                	$post_id = wp_insert_post($new_post);
 
 					                	add_post_meta($post_id, $meta_key = "id", $meta_value=$new_post["id"], $unique=TRUE);
+					                	add_post_meta($post_id, 'instateam_created_time', $data->created_time, true);
 
 					                	if($upload_images==='yes'):
 					                		$photoURL = icp_upload_image($data->images->standard_resolution->url, $post_id);
@@ -988,10 +1070,10 @@ function icp_get_user_photos(){
 
 		   			endif;
 
-		   			if(!isset($media->pagination->max_tag_id)):
-				   		break;
+		   			if(isset($media->pagination->next_url)):
+		   				$next_id = $media->pagination->next_url;
 				   	else:
-				   		$next_id = $media->pagination->max_tag_id;
+				   		break;
 				   	endif;
 
 		   		endfor;
@@ -1050,7 +1132,6 @@ function icp_get_hashtag_photos(){
 
 								if($wpdb->get_var($sql) == NULL):
 
-									$new_post["post_date"]   	= date('Y-m-d H:i:s');
 				                	$new_post["post_title"]  	= strip_tags($data->caption->text);
 				                	$new_post["post_content"]	= '<img src="'.$data->images->standard_resolution->url.'" />';
 				                	$new_post["post_type"]    	= $settings['icp_post_type'];
@@ -1059,6 +1140,7 @@ function icp_get_hashtag_photos(){
 				                	$post_id = wp_insert_post($new_post);
 
 				                	add_post_meta($post_id, $meta_key = "id", $meta_value=$new_post["id"], $unique=TRUE);
+				                	add_post_meta($post_id, 'instateam_created_time', $data->created_time, true);
 
 				                	if($upload_images==='yes'):
 				                		$photoURL = icp_upload_image($data->images->standard_resolution->url, $post_id);
@@ -1091,7 +1173,6 @@ function icp_get_hashtag_photos(){
 
 								if($wpdb->get_var($sql) == NULL):
 
-									$new_post["post_date"]   	= date('Y-m-d H:i:s');
 				                	$new_post["post_title"]  	= strip_tags($data->caption->text);
 				                	$new_post["post_content"]	= $data->images->standard_resolution->url;
 				                	$new_post["post_type"]    	= $settings['icp_post_type'];
@@ -1100,6 +1181,7 @@ function icp_get_hashtag_photos(){
 				                	$post_id = wp_insert_post($new_post);
 
 				                	add_post_meta($post_id, $meta_key = "id", $meta_value=$new_post["id"], $unique=TRUE);
+				                	add_post_meta($post_id, 'instateam_created_time', $data->created_time, true);
 
 				                	if($upload_images==='yes'):
 				                		$photoURL = icp_upload_image($data->images->standard_resolution->url, $post_id);
@@ -1120,10 +1202,10 @@ function icp_get_hashtag_photos(){
 
 		   			endif;
 
-		   			if(!isset($media->pagination->max_tag_id)):
+		   			if(!isset($media->pagination->next_url)):
 				   		break;
 				   	else:
-				   		$next_id = $media->pagination->max_tag_id;
+				   		$next_id = $media->pagination->next_url;
 				   	endif;
 
 		   		endfor;
@@ -1214,6 +1296,16 @@ function icp_flush_rewrite_rules() {
 	flush_rewrite_rules();
 }
 
+function icp_check_empty_fields(){
+	$settings = get_option('icp_settings');
+	
+	if( empty($settings['icp_public_hashtag'][0]) && empty($settings['icp_user_id'][0]) ):
+		return __( 'You need to', 'insta_team').'<a href="'.get_admin_url('','admin.php?page=insta_team').'">'.__('add your first team member', 'insta_team' ).'</a>';
+	else:
+		return __( 'No photos available yet.', 'insta_team' );
+	endif;
+}
+
 add_action( 'init', 'icp_photo_post_type_init' );
 function icp_photo_post_type_init() {
 
@@ -1226,28 +1318,28 @@ function icp_photo_post_type_init() {
 
 		array( 
 			'labels' => array(
-				'name' => __( $icp_post_plural, 'icpinstagram' ),
-				'singular_name' => __( $icp_post_singular, 'icpinstagram' ), 
-				'all_items' => __( 'All '.$icp_post_plural, 'icpinstagram' ), 
-				'add_new' => __( 'Add New', 'icpinstagram' ),
-				'add_new_item' => __( 'Add New '.$icp_post_singular, 'icpinstagram' ), 
-				'edit' => __( 'Edit', 'icpinstagram' ),
-				'edit_item' => __( 'Edit '.$icp_post_plural, 'icpinstagram' ), 
-				'new_item' => __( 'New '.$icp_post_singular, 'icpinstagram' ), 
-				'view_item' => __( 'View '.$icp_post_singular, 'icpinstagram' ), 
-				'search_items' => __( 'Search '.$icp_post_singular, 'icpinstagram' ), 
-				'not_found' =>  __( 'Nothing found in the Database.', 'icpinstagram' ),
-				'not_found_in_trash' => __( 'Nothing found in Trash', 'icpinstagram' ), 
+				'name' => __( 'InstaTeam Pics', 'insta_team' ),
+				'singular_name' => __( 'InstaTeam Pic', 'insta_team' ), 
+				'all_items' => __( 'All InstaTeam Pics', 'insta_team' ), 
+				'add_new' => __( 'Add New', 'insta_team' ),
+				'add_new_item' => __( 'Add New InstaTeam Pic', 'insta_team' ), 
+				'edit' => __( 'Edit', 'insta_team' ),
+				'edit_item' => __( 'Edit InstaTeam Pics', 'insta_team' ), 
+				'new_item' => __( 'New InstaTeam Pic', 'insta_team' ), 
+				'view_item' => __( 'View InstaTeam Pic', 'insta_team' ), 
+				'search_items' => __( 'Search InstaTeam Pics', 'insta_team' ), 
+				'not_found' =>  icp_check_empty_fields(),
+				'not_found_in_trash' => __( 'Nothing found in Trash', 'insta_team' ), 
 				'parent_item_colon' => ''
 			), 
-			'description' => __( 'This is the custom post type for the Instagram photos', 'icpinstagram' ), 
+			'description' => __( 'This is the custom post type for the Instagram photos', 'insta_team' ), 
 			'public' => true,
 			'publicly_queryable' => true,
 			'exclude_from_search' => false,
 			'show_ui' => true,
 			'query_var' => true,
 			'menu_position' => 8, 
-			'rewrite'	=> array( 'slug' => 'wpteam_instagram', 'with_front' => false ),
+			'rewrite'	=> array( 'slug' => 'instagram_wpteams', 'with_front' => false ),
 			'has_archive' => 'wpteam_instagram_photos',
 			'capability_type' => 'post',
 			'hierarchical' => false,

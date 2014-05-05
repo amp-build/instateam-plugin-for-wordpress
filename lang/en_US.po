@@ -1,0 +1,473 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: instagram_wpteams.php\n"
+"POT-Creation-Date: 2014-05-05 14:59-0600\n"
+"PO-Revision-Date: 2014-05-05 14:59-0600\n"
+"Last-Translator: Adan\n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.5\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: ..\n"
+
+#: ../instagram_wpteams.php:84
+msgid "Photo"
+msgstr ""
+
+#: ../instagram_wpteams.php:85
+msgid "Photos"
+msgstr ""
+
+#: ../instagram_wpteams.php:141
+msgid "No photos found. "
+msgstr ""
+
+#: ../instagram_wpteams.php:175
+msgid "Once every 60 seconds"
+msgstr ""
+
+#: ../instagram_wpteams.php:184
+msgid "InstaTeam"
+msgstr ""
+
+#: ../instagram_wpteams.php:246
+msgid "Hashtags & Users"
+msgstr ""
+
+#: ../instagram_wpteams.php:246
+msgid "Import Options"
+msgstr ""
+
+#: ../instagram_wpteams.php:246
+msgid "Shortcodes"
+msgstr ""
+
+#: ../instagram_wpteams.php:246
+msgid "Unlink Account"
+msgstr ""
+
+#: ../instagram_wpteams.php:246
+msgid "Help"
+msgstr ""
+
+#: ../instagram_wpteams.php:262
+msgid "Thanks for choosing InstaTeam!"
+msgstr ""
+
+#: ../instagram_wpteams.php:263
+msgid ""
+"<p><b>About This Plugin</b><br />\n"
+"This plugin was created by SPARK6, a creative agency located in Santa "
+"Monica, Ca. We believe in leveraging technology to reduce human suffering. "
+"Learn more at <a href=\"http://www.spark6.com\" target=\"_blank\">www.spark6."
+"com</a>. If you have any suggestions on how this plugin can be improved "
+"please feel free to contact us at <a href=\"mailto:hello@spark6.com"
+"\">hello@spark6.com</a>.</p>\n"
+"\n"
+"<p><b>Like this plugin?</b><br />\n"
+"If you like this plugin, please rate it 5 star on Wordpress.org! We hope you "
+"do!</p>\n"
+"\n"
+"<p><b>Contribute!</b><br />\n"
+"If you would like to extend the functionality of Instagram For WordPress "
+"Teams and are a developer, head over to our Github repository to download "
+"the full source code.</p>\n"
+"\n"
+"<p><b>Stay Updated</b><br />\n"
+"If you would like to keep up to date regarding Instagram For WordPress Teams "
+"plugin and other plugins by SPARK6, subscribe to our newsletter:</p>\n"
+"<!-- Begin MailChimp Signup Form -->\n"
+"\n"
+"<div id=\"mc_embed_signup\">\n"
+"\n"
+"\t<form id=\"mc-form\" style=\"padding:15px;\" action=\"http://spark6.us8."
+"list-manage.com/subscribe/post?u=3f570c3013887ad5074dec610&amp;id=8456f2c27c"
+"\" method=\"post\">\n"
+"\t\t<p class=\"mc-response\"></p>\n"
+"\t    <input id=\"mce-EMAIL\" name=\"EMAIL\" type=\"email\" placeholder="
+"\"email\">\n"
+"\t    <label for=\"mce-EMAIL\"></label>\n"
+"\n"
+"\t    <br><br>\n"
+"\t    <div style=\"position: absolute; left: -5000px;\"><input type=\"text\" "
+"name=\"b_3f570c3013887ad5074dec610_8456f2c27c\" value=\"\"></div>\n"
+"\t    <input type=\"button\" id=\"mcSubmit\" class=\"button\" value=\"Submit"
+"\">\n"
+"\t</form>\n"
+"\n"
+"</div>\n"
+"\n"
+"<!--End mc_embed_signup-->\n"
+"\t"
+msgstr ""
+
+#: ../instagram_wpteams.php:336
+msgid ""
+"Your instagram access token was deleted, but you also need to revoke "
+"permissions from this plugin, <a href=\"https://instagram.com/accounts/"
+"manage_access\" target=\"_blank\">click here</a> and revoke access to the "
+"\"Instagram for Wordpress Teams\" app."
+msgstr ""
+
+#: ../instagram_wpteams.php:348
+msgid "Settings saved."
+msgstr ""
+
+#: ../instagram_wpteams.php:367
+msgid "Authorization succeeded!"
+msgstr ""
+
+#: ../instagram_wpteams.php:371
+msgid "There was an error, try again..."
+msgstr ""
+
+#: ../instagram_wpteams.php:381
+msgid ""
+"Click to be taken to Instagram's site to securely authorize this plugin for "
+"use with your account."
+msgstr ""
+
+#: ../instagram_wpteams.php:382
+msgid "Secure Authentication"
+msgstr ""
+
+#: ../instagram_wpteams.php:412
+msgid "Team &amp; Tags"
+msgstr ""
+
+#: ../instagram_wpteams.php:414
+msgid ""
+"This is where your Instagram users are managed. Click <span id=\"icpUserLabel"
+"\">\"Add New Team Member\"</span> to add <span id=\"icpUserNumber\">your "
+"first one</span>."
+msgstr ""
+
+#: ../instagram_wpteams.php:437 ../instagram_wpteams.php:482
+msgid "Instagram Username:"
+msgstr ""
+
+#: ../instagram_wpteams.php:449 ../instagram_wpteams.php:494
+msgid "We can't import photos from this account because it is private"
+msgstr ""
+
+#: ../instagram_wpteams.php:453 ../instagram_wpteams.php:498
+msgid "Import photos tagged:"
+msgstr ""
+
+#: ../instagram_wpteams.php:456 ../instagram_wpteams.php:501
+#: ../instagram_wpteams.php:545
+msgid ""
+"Insert the hashtags without # and separated by comma, don't use blank spaces."
+msgstr ""
+
+#: ../instagram_wpteams.php:523
+msgid "Add New Team Member"
+msgstr ""
+
+#: ../instagram_wpteams.php:525
+msgid "Add Another Team Member"
+msgstr ""
+
+#: ../instagram_wpteams.php:531
+msgid "Public Tags"
+msgstr ""
+
+#: ../instagram_wpteams.php:533
+msgid ""
+"Tags added here will import any photo found on Instagram matching these "
+"tags, even if they are not owned by a team member above. We recommend "
+"setting \"Default Post Status\" (under the Import Options tab) to \"Draft\", "
+"\"Pending\" or \"Private\" if you use this option."
+msgstr ""
+
+#: ../instagram_wpteams.php:541
+msgid "Publicly Searchable Tags:"
+msgstr ""
+
+#: ../instagram_wpteams.php:564
+msgid "Import Post Rules"
+msgstr ""
+
+#: ../instagram_wpteams.php:569
+msgid "Import to Post Type"
+msgstr ""
+
+#: ../instagram_wpteams.php:586
+msgid "Choose the post type that all photos will be imported as."
+msgstr ""
+
+#: ../instagram_wpteams.php:591
+msgid "Import Image Rules"
+msgstr ""
+
+#: ../instagram_wpteams.php:597
+msgid "Default post status"
+msgstr ""
+
+#: ../instagram_wpteams.php:604
+msgid "Published - Automatically post to website"
+msgstr ""
+
+#: ../instagram_wpteams.php:607
+msgid "Pending - Wait for moderation"
+msgstr ""
+
+#: ../instagram_wpteams.php:610
+msgid "Private - Must be logged in to view"
+msgstr ""
+
+#: ../instagram_wpteams.php:613
+msgid "Choose the post status of all the imported photos."
+msgstr ""
+
+#: ../instagram_wpteams.php:617
+msgid "Featured Image?"
+msgstr ""
+
+#: ../instagram_wpteams.php:621
+msgid "Save imported image as featured image."
+msgstr ""
+
+#: ../instagram_wpteams.php:626
+msgid "Import Quantity"
+msgstr ""
+
+#: ../instagram_wpteams.php:633
+msgid "20 Photos"
+msgstr ""
+
+#: ../instagram_wpteams.php:636
+msgid "40 Photos"
+msgstr ""
+
+#: ../instagram_wpteams.php:639
+msgid "60 Photos"
+msgstr ""
+
+#: ../instagram_wpteams.php:642
+msgid "80 Photos"
+msgstr ""
+
+#: ../instagram_wpteams.php:645
+msgid "100 Photos"
+msgstr ""
+
+#: ../instagram_wpteams.php:648
+msgid "200 Photos"
+msgstr ""
+
+#: ../instagram_wpteams.php:651
+msgid "Choose the number of items to query per API call."
+msgstr ""
+
+#: ../instagram_wpteams.php:655
+msgid "Import Interval"
+msgstr ""
+
+#: ../instagram_wpteams.php:662
+msgid "Every Minute"
+msgstr ""
+
+#: ../instagram_wpteams.php:665
+msgid "Once Hourly"
+msgstr ""
+
+#: ../instagram_wpteams.php:668
+msgid "Twice Daily"
+msgstr ""
+
+#: ../instagram_wpteams.php:671
+msgid "Once Daily"
+msgstr ""
+
+#: ../instagram_wpteams.php:683
+msgid "Overview"
+msgstr ""
+
+#: ../instagram_wpteams.php:685
+msgid ""
+"This plugin supports <a href=\"http://codex.wordpress.org/Shortcode_API\" "
+"target=\"_blank\">shortcodes</a>. Include the shortcode [insta_team] in any "
+"page where you want your photo grid to appear."
+msgstr ""
+
+#: ../instagram_wpteams.php:690
+msgid "Controlling the number of photos to display"
+msgstr ""
+
+#: ../instagram_wpteams.php:692
+msgid ""
+"There is an option to limit the number of photos that appear in the grid "
+"(showing the newest first). You can enable this functionality by including "
+"photos=x in the shortcode."
+msgstr ""
+
+#: ../instagram_wpteams.php:694
+msgid "Example: <br /><br /><b>[insta_team photos=12]"
+msgstr ""
+
+#: ../instagram_wpteams.php:699
+msgid "Adding a CSS class to the shortcode"
+msgstr ""
+
+#: ../instagram_wpteams.php:701
+msgid ""
+"There is also an option to add a custom class to the images. You can enable "
+"this by adding class=somecustomclass to the shortcode. A custom class is "
+"helpful for adding things like floats and other CSS to support responsive "
+"grids."
+msgstr ""
+
+#: ../instagram_wpteams.php:703
+msgid "Example: <br /><br /><b>[insta_team photos=12 class=some_custom_class]"
+msgstr ""
+
+#: ../instagram_wpteams.php:713
+msgid "Product Suggestions"
+msgstr ""
+
+#: ../instagram_wpteams.php:715
+msgid ""
+"If you have any suggestions on how this plugin can be improved please feel "
+"free to contact us at <a href=\"mailto:hello@spark6.com\">hello@spark6.com</"
+"a>."
+msgstr ""
+
+#: ../instagram_wpteams.php:719
+msgid "Support Forums"
+msgstr ""
+
+#: ../instagram_wpteams.php:721
+msgid ""
+"If you need support please check out the [Plugin Forums for InstaTeam] on <a "
+"href=\"http://wordpress.org\" target=\"_blank\">Wordpress.org</a>"
+msgstr ""
+
+#: ../instagram_wpteams.php:725
+msgid "FAQ"
+msgstr ""
+
+#: ../instagram_wpteams.php:727
+msgid "You can also check out the [FAQ]"
+msgstr ""
+
+#: ../instagram_wpteams.php:731
+msgid "About This Plugin:"
+msgstr ""
+
+#: ../instagram_wpteams.php:733
+msgid ""
+"This plugin was created and is maintained by SPARK6, is a creative agency "
+"located in Santa Monica, Ca. We believe in leveraging technology to further "
+"social innovation. Learn more at <a href=\"http://www.spark6.com/about-us\" "
+"target=\"_blank\">www.spark6.com</a> and be sure to Like Us on <a href="
+"\"https://www.facebook.com/spark6agency\" target=\"_blank\">Facebook</a>."
+msgstr ""
+
+#: ../instagram_wpteams.php:737
+msgid "License Info"
+msgstr ""
+
+#: ../instagram_wpteams.php:739
+msgid ""
+"We are releasing this plugin under the same license that WordPress is "
+"released on: GPLv2 (or later) from the <a href=\"http://www.fsf.org/\" "
+"target=\"_blank\">Free Software Foundation</a>. A copy of the license is "
+"included with every copy of WordPress, but you can also read <a href="
+"\"http://www.gnu.org/licenses/gpl-2.0.html\" target=\"_blank\">the text of "
+"the license here</a>."
+msgstr ""
+
+#: ../instagram_wpteams.php:741
+msgid ""
+"Part of this license outlines requirements for derivative works, such as "
+"plugins or themes. Derivatives of this plugin inherit the GPL license. <a "
+"href=\"http://www.drupal.org/\" target=\"_blank\">Drupal</a>, which has the "
+"same GPL license as WordPress, has an excellent page on licensing as it "
+"applies to themes and modules (their word for plugins)."
+msgstr ""
+
+#: ../instagram_wpteams.php:757
+msgid "Unlink Your Instagram Account"
+msgstr ""
+
+#: ../instagram_wpteams.php:759
+msgid ""
+"Use this screen to unlink your Instagram Account. If you proceed no new "
+"images will be pulled from Instagram and you will need to reactivate an "
+"account."
+msgstr ""
+
+#: ../instagram_wpteams.php:761
+msgid "Unlink Instagram Account"
+msgstr ""
+
+#: ../instagram_wpteams.php:774
+msgid "Save Settings"
+msgstr ""
+
+#: ../instagram_wpteams.php:1303
+msgid "You need to"
+msgstr ""
+
+#: ../instagram_wpteams.php:1303
+msgid "add your first team member"
+msgstr ""
+
+#: ../instagram_wpteams.php:1305
+msgid "No photos available yet."
+msgstr ""
+
+#: ../instagram_wpteams.php:1321
+msgid "InstaTeam Pics"
+msgstr ""
+
+#: ../instagram_wpteams.php:1322
+msgid "InstaTeam Pic"
+msgstr ""
+
+#: ../instagram_wpteams.php:1323
+msgid "All InstaTeam Pics"
+msgstr ""
+
+#: ../instagram_wpteams.php:1324
+msgid "Add New"
+msgstr ""
+
+#: ../instagram_wpteams.php:1325
+msgid "Add New InstaTeam Pic"
+msgstr ""
+
+#: ../instagram_wpteams.php:1326
+msgid "Edit"
+msgstr ""
+
+#: ../instagram_wpteams.php:1327
+msgid "Edit InstaTeam Pics"
+msgstr ""
+
+#: ../instagram_wpteams.php:1328
+msgid "New InstaTeam Pic"
+msgstr ""
+
+#: ../instagram_wpteams.php:1329
+msgid "View InstaTeam Pic"
+msgstr ""
+
+#: ../instagram_wpteams.php:1330
+msgid "Search InstaTeam Pics"
+msgstr ""
+
+#: ../instagram_wpteams.php:1332
+msgid "Nothing found in Trash"
+msgstr ""
+
+#: ../instagram_wpteams.php:1335
+msgid "This is the custom post type for the Instagram photos"
+msgstr ""

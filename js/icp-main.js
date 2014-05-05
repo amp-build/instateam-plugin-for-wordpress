@@ -12,19 +12,25 @@ jQuery( document ).ready(function( $ ) {
 		    	var loading = $elem.next('.icp-live-icon').find('.icp-loading');
 		    	var ok = $elem.next('.icp-live-icon').find('.icp-yes');
 		    	var fail = $elem.next('.icp-live-icon').find('.icp-no');
+		    	var alert = $elem.next('.icp-live-icon').find('.icp-alert');
+		    	var message = $elem.parent('td').find('.icp-message');
 		    	var hiddenInput = $elem.next().next('input[type=hidden]');
 		        $.ajax({
 					type: "POST",
 					url: ajaxurl,
 					data: { username: user, action: 'icp_check_user_id' },
 					beforeSend: function () {
-						fail.add(ok).hide();
+						fail.add(ok).add(alert).add(message).hide();
 						loading.show();
 					},
 		        	success:  function (response) {
 		        		loading.hide();
 		            	if(response=='false'){
 		            		fail.show();
+		            		hiddenInput.val('');
+		            	} else if(response=='alert'){
+		            		alert.show();
+		            		message.show();
 		            		hiddenInput.val('');
 		            	} else {
 		            		ok.show();
@@ -165,5 +171,26 @@ jQuery( document ).ready(function( $ ) {
 	}).on('mouseleave', '.icp-hover-table',  function () {
 	    $(this).find('.icp-trash').fadeOut('fast');
 	});
+
+	$(document).on('click', '#mcSubmit', function(e){
+		console.log('clicked');
+		e.preventDefault();
+
+		$.ajax({
+	        url: 'http://spark6.us8.list-manage.com/subscribe/post-json?u=3f570c3013887ad5074dec610&amp;id=8456f2c27c&c=?',
+	        type: 'GET',
+	        data: $('#mc-form').serialize(),
+	        dataType: 'json',
+	        contentType: "application/json; charset=utf-8",
+	        success: function (data) {
+	           if (data['result'] == "success") {
+	                $('.mc-response').html(data['msg']).removeClass('error');
+	           } else {
+	           		$('.mc-response').html('Error: '+data['msg']).addClass('error');
+	           }
+	        }
+	    });
+	});
+
 
 });

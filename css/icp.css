@@ -50,3 +50,21 @@
 	width:24px; height:auto;
 	display:block;
 }
+
+.icp-message{
+	width: 100%;
+	float: left;
+	color:red!important;
+	font-weight:bold;
+}
+
+.mc-response{
+	font-weight:bold;
+	font-size:12px;
+	margin:5px 0 10px;
+	padding:0!important;
+}
+
+.mc-response.error{
+	color:red;
+}
