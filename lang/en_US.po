@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: instagram_wpteams.php\n"
-"POT-Creation-Date: 2014-05-05 14:59-0600\n"
-"PO-Revision-Date: 2014-05-05 14:59-0600\n"
+"POT-Creation-Date: 2014-05-16 18:29-0600\n"
+"PO-Revision-Date: 2014-05-16 18:29-0600\n"
 "Last-Translator: Adan\n"
 "Language-Team: \n"
 "Language: en_US\n"
@@ -328,40 +328,68 @@ msgstr ""
 msgid "Example: <br /><br /><b>[insta_team photos=12 class=some_custom_class]"
 msgstr ""
 
-#: ../instagram_wpteams.php:713
+#: ../instagram_wpteams.php:708
+msgid "Add a CSS Grid "
+msgstr ""
+
+#: ../instagram_wpteams.php:710
+msgid ""
+"Adding this option to your short code will convert your photos into a 4 "
+"column responsive grid."
+msgstr ""
+
+#: ../instagram_wpteams.php:712
+msgid "Example: <br /><br /><b>[insta_team photos=12 style=yes]"
+msgstr ""
+
+#: ../instagram_wpteams.php:717
+msgid "Add a Lightbox "
+msgstr ""
+
+#: ../instagram_wpteams.php:719
+msgid ""
+"Use this shortcode to tell the plugin if you want users to be able to click "
+"on a larger version of the photo."
+msgstr ""
+
+#: ../instagram_wpteams.php:721
+msgid "Example: <br /><br /><b>[insta_team photos=12 lightbox=yes]"
+msgstr ""
+
+#: ../instagram_wpteams.php:733
 msgid "Product Suggestions"
 msgstr ""
 
-#: ../instagram_wpteams.php:715
+#: ../instagram_wpteams.php:735
 msgid ""
 "If you have any suggestions on how this plugin can be improved please feel "
 "free to contact us at <a href=\"mailto:hello@spark6.com\">hello@spark6.com</"
 "a>."
 msgstr ""
 
-#: ../instagram_wpteams.php:719
+#: ../instagram_wpteams.php:739
 msgid "Support Forums"
 msgstr ""
 
-#: ../instagram_wpteams.php:721
+#: ../instagram_wpteams.php:741
 msgid ""
 "If you need support please check out the [Plugin Forums for InstaTeam] on <a "
 "href=\"http://wordpress.org\" target=\"_blank\">Wordpress.org</a>"
 msgstr ""
 
-#: ../instagram_wpteams.php:725
+#: ../instagram_wpteams.php:745
 msgid "FAQ"
 msgstr ""
 
-#: ../instagram_wpteams.php:727
+#: ../instagram_wpteams.php:747
 msgid "You can also check out the [FAQ]"
 msgstr ""
 
-#: ../instagram_wpteams.php:731
+#: ../instagram_wpteams.php:751
 msgid "About This Plugin:"
 msgstr ""
 
-#: ../instagram_wpteams.php:733
+#: ../instagram_wpteams.php:753
 msgid ""
 "This plugin was created and is maintained by SPARK6, is a creative agency "
 "located in Santa Monica, Ca. We believe in leveraging technology to further "
@@ -370,11 +398,11 @@ msgid ""
 "\"https://www.facebook.com/spark6agency\" target=\"_blank\">Facebook</a>."
 msgstr ""
 
-#: ../instagram_wpteams.php:737
+#: ../instagram_wpteams.php:757
 msgid "License Info"
 msgstr ""
 
-#: ../instagram_wpteams.php:739
+#: ../instagram_wpteams.php:759
 msgid ""
 "We are releasing this plugin under the same license that WordPress is "
 "released on: GPLv2 (or later) from the <a href=\"http://www.fsf.org/\" "
@@ -384,7 +412,7 @@ msgid ""
 "the license here</a>."
 msgstr ""
 
-#: ../instagram_wpteams.php:741
+#: ../instagram_wpteams.php:761
 msgid ""
 "Part of this license outlines requirements for derivative works, such as "
 "plugins or themes. Derivatives of this plugin inherit the GPL license. <a "
@@ -393,81 +421,81 @@ msgid ""
 "applies to themes and modules (their word for plugins)."
 msgstr ""
 
-#: ../instagram_wpteams.php:757
+#: ../instagram_wpteams.php:777
 msgid "Unlink Your Instagram Account"
 msgstr ""
 
-#: ../instagram_wpteams.php:759
+#: ../instagram_wpteams.php:779
 msgid ""
 "Use this screen to unlink your Instagram Account. If you proceed no new "
 "images will be pulled from Instagram and you will need to reactivate an "
 "account."
 msgstr ""
 
-#: ../instagram_wpteams.php:761
+#: ../instagram_wpteams.php:781
 msgid "Unlink Instagram Account"
 msgstr ""
 
-#: ../instagram_wpteams.php:774
+#: ../instagram_wpteams.php:794
 msgid "Save Settings"
 msgstr ""
 
-#: ../instagram_wpteams.php:1303
+#: ../instagram_wpteams.php:1323
 msgid "You need to"
 msgstr ""
 
-#: ../instagram_wpteams.php:1303
+#: ../instagram_wpteams.php:1323
 msgid "add your first team member"
 msgstr ""
 
-#: ../instagram_wpteams.php:1305
+#: ../instagram_wpteams.php:1325
 msgid "No photos available yet."
 msgstr ""
 
-#: ../instagram_wpteams.php:1321
+#: ../instagram_wpteams.php:1341
 msgid "InstaTeam Pics"
 msgstr ""
 
-#: ../instagram_wpteams.php:1322
+#: ../instagram_wpteams.php:1342
 msgid "InstaTeam Pic"
 msgstr ""
 
-#: ../instagram_wpteams.php:1323
+#: ../instagram_wpteams.php:1343
 msgid "All InstaTeam Pics"
 msgstr ""
 
-#: ../instagram_wpteams.php:1324
+#: ../instagram_wpteams.php:1344
 msgid "Add New"
 msgstr ""
 
-#: ../instagram_wpteams.php:1325
+#: ../instagram_wpteams.php:1345
 msgid "Add New InstaTeam Pic"
 msgstr ""
 
-#: ../instagram_wpteams.php:1326
+#: ../instagram_wpteams.php:1346
 msgid "Edit"
 msgstr ""
 
-#: ../instagram_wpteams.php:1327
+#: ../instagram_wpteams.php:1347
 msgid "Edit InstaTeam Pics"
 msgstr ""
 
-#: ../instagram_wpteams.php:1328
+#: ../instagram_wpteams.php:1348
 msgid "New InstaTeam Pic"
 msgstr ""
 
-#: ../instagram_wpteams.php:1329
+#: ../instagram_wpteams.php:1349
 msgid "View InstaTeam Pic"
 msgstr ""
 
-#: ../instagram_wpteams.php:1330
+#: ../instagram_wpteams.php:1350
 msgid "Search InstaTeam Pics"
 msgstr ""
 
-#: ../instagram_wpteams.php:1332
+#: ../instagram_wpteams.php:1352
 msgid "Nothing found in Trash"
 msgstr ""
 
-#: ../instagram_wpteams.php:1335
+#: ../instagram_wpteams.php:1355
 msgid "This is the custom post type for the Instagram photos"
 msgstr ""
