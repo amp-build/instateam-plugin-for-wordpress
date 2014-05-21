@@ -264,13 +264,13 @@ function icp_register_pointer_welcome( $p ) {
 This plugin was created by SPARK6, a creative agency located in Santa Monica, Ca. We believe in leveraging technology to reduce human suffering. Learn more at <a href="http://www.spark6.com" target="_blank">www.spark6.com</a>. If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@spark6.com">hello@spark6.com</a>.</p>
 
 <p><b>Like this plugin?</b><br />
-If you like this plugin, please rate it 5 star on Wordpress.org! We hope you do!</p>
+If you like this plugin, please rate it 5 stars on Wordpress.org! We hope you do!</p>
 
 <p><b>Contribute!</b><br />
-If you would like to extend the functionality of Instagram For WordPress Teams and are a developer, head over to our Github repository to download the full source code.</p>
+If you would like to extend the functionality of InstaTeam Instagram Importer and are a developer, head over to our Github repository to download the full source code.</p>
 
 <p><b>Stay Updated</b><br />
-If you would like to keep up to date regarding Instagram For WordPress Teams plugin and other plugins by SPARK6, subscribe to our newsletter:</p>
+If you would like to keep up to date regarding InstaTeam Instagram Importer plugin and other plugins by SPARK6, subscribe to our newsletter:</p>
 <!-- Begin MailChimp Signup Form -->
 
 <div id="mc_embed_signup">
@@ -333,7 +333,7 @@ function icp_display_settings() {
 					$updated = update_option( "icp_settings", $settings );
 		?>
 			<div id="setting-error-settings_updated" class="updated settings-error"> 
-				<p><strong><?php _e('Your instagram access token was deleted, but you also need to revoke permissions from this plugin, <a href="https://instagram.com/accounts/manage_access" target="_blank">click here</a> and revoke access to the "Instagram for Wordpress Teams" app.', 'insta_team' ); ?></strong></p>
+				<p><strong><?php _e('Your instagram access token was deleted, but you also need to revoke permissions from this plugin, <a href="https://instagram.com/accounts/manage_access" target="_blank">click here</a> and revoke access to the "InstaTeam Instagram Importer" app.', 'insta_team' ); ?></strong></p>
 			</div>
 		<?php
 				endif;
