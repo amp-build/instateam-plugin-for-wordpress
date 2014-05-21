@@ -707,7 +707,7 @@ function icp_display_settings() {
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'Add a CSS Grid ', 'insta_team' ); ?></label></th>
 									<td>		 
-										<p><?php _e( 'Adding this option to your short code will convert your photos into a 4 column responsive grid.', 'insta_team' ); ?></p>
+										<p><?php _e( 'Adding this option to your shortcode will convert your photos into a 4 column responsive grid.', 'insta_team' ); ?></p>
 										 
 										<p><?php _e( 'Example: <br /><br /><b>[insta_team photos=12 style=yes]', 'insta_team' ); ?></b></p>
 									</td>
