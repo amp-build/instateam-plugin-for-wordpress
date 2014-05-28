@@ -808,13 +808,18 @@ function icp_display_settings() {
 
 function icp_get_current_url() {	
 	// As seen on http://stackoverflow.com/a/1229924/789960
-	$pageURL = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
-	if ($_SERVER["SERVER_PORT"] != "80"){
-	    $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-	} else {
-	    $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-	}
-	$pageURL = icp_remove_querystring_var($pageURL, 'unlink');
+	if($_SERVER["SERVER_NAME"]!==''):
+		$pageURL = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
+		if ($_SERVER["SERVER_PORT"] != "80"){
+		    $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+		} else {
+		    $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+		}
+		$pageURL = icp_remove_querystring_var($pageURL, 'unlink');
+	else:		
+		$pageURL = get_bloginfo('url').'/wp-admin/admin.php?page=insta_team';
+	endif;
+
 	return urlencode($pageURL);
 }
 
