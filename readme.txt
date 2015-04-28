@@ -1,10 +1,10 @@
 === InstaTeam Instagram Importer ===
-Contributors: SPARK6
+Contributors: SPARK6, abrudtkuhl
 Donate link: Free
 Tags: instagram, import, teams, photo, gallery
 Requires at least: 3.0.1
 Tested up to: 3.9.1
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ If you are looking for a plugin that will allow you to consolidate posts from on
 Features:
 
 * Ability to import one or more Instagram user accounts (whitelist) into Wordpress as custom Post Types.
-* Ability to choose which photos are imported based on one or more #hashtags. You can also import tags without providing a user user whitelist. 
+* Ability to choose which photos are imported based on one or more #hashtags. You can also import tags without providing a user user whitelist.
 * Ability to map imported photos to a new or pre-existing Post Type of your choosing.
 * Workflow - choose the post status of all imported photos. Helpful if you want to review any photos that are imported before they post live to site. There are 3 settings: Auto-post, moderate, or private (must be logged in to view).
 * Option to set all imported images to featured images.
@@ -27,16 +27,16 @@ Features:
 * Ability to set import frequency (every minute, every hour, twice daily, daily)
 * Shortcode that supports custom CSS class name.
 * Shortcode supports an option “photos” parameter that lets you specify the number of images to return in the grid.
-* Support for responsive web breakpoints. 
-* When clicked, individual photos launch into a responsive lightbox (courtesy of Magnific Popup. 
-* Ability to unlink account at any time. 
+* Support for responsive web breakpoints.
+* When clicked, individual photos launch into a responsive lightbox (courtesy of Magnific Popup.
+* Ability to unlink account at any time.
 
 == Installation ==
 
 **Automatic Install**
 
-By far, the simplest way to install the plugin is to click on “Plugins” then “Add” and type “InstaTeam Instagram Importer” in the search field. 
-From here you can click “Install” and have Wordpress automatically install and configure the plugin for you. 
+By far, the simplest way to install the plugin is to click on “Plugins” then “Add” and type “InstaTeam Instagram Importer” in the search field.
+From here you can click “Install” and have Wordpress automatically install and configure the plugin for you.
 
 **Manual Install**
 
@@ -48,7 +48,7 @@ From here you can click “Install” and have Wordpress automatically install a
 
 **Configuration**
 
-Once the plugin has been installed navigate to the “Plugins” page and click the “Activate Plugin” link. 
+Once the plugin has been installed navigate to the “Plugins” page and click the “Activate Plugin” link.
 You will now see a new item at the bottom of the left navigation called “InstaTeam”. Click this item to launch the plugin configuration.
 Be sure that you are logged into your Instagram account, then click the “Secure Authentication” button located on this page. This will authorize your website to use the Instagram API.  Click the “Authorize” button when prompted by Instagram. Installation is complete once you are redirected back to the main plugin page.
 
@@ -56,13 +56,14 @@ Be sure that you are logged into your Instagram account, then click the “Secur
 == Screenshots ==
 
 1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets 
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png` 
+the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
+directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
 (or jpg, jpeg, gif).
 2. This is the second screen shot
 
 == Changelog ==
-
+= 1.1 =
+* Fixes bug caused by Instagram API Update http://developers.instagram.com/post/116410697261/publishing-guidelines-and-signed-requests
 = 1.0 =
 * Initial release.
 

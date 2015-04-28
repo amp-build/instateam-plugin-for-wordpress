@@ -5,7 +5,7 @@ Plugin URI: http://spark6.com
 Description: This plugin makes it possible to import a whitelist of Instagram users and tagged photos into your Wordpress blog as Custom Post Types, then display those photos anywhere on your site using the shortcode “insta_team photos”.
 Author URI: http://spark6.com
 Author: SPARK6
-Version: 1.0
+Version: 1.1
 */
 
 define("ICP_PLUGIN_NAME", "InstaTeam Instagram Importer", true);
@@ -51,14 +51,14 @@ function icp_remove_wp_pointers(){
 
 	$admin_users = get_users('role=administrator');
     foreach ($admin_users as $admin_user):
-        
+
 		$user_meta = get_user_meta( $admin_user->ID, 'dismissed_wp_pointers' );
 		$pointers = explode(',', $user_meta[0]);
 
 		$indexPointer = array_search('wpteam_instagram', $pointers);
 		if($indexPointer!==false):
 			unset($pointers[$indexPointer]);
-			$new_pointers = implode(',', $pointers);			
+			$new_pointers = implode(',', $pointers);
 			update_user_meta($admin_user->ID, 'dismissed_wp_pointers', $new_pointers );
 		endif;
 
@@ -87,9 +87,9 @@ function icp_register_settings() {
 			'icp_featured_image' => ''
 		);
 		add_option( "icp_settings", $settings, '', 'yes' );
-	}	
+	}
 }
- 
+
 add_action( 'admin_init', 'icp_register_settings' );
 
 add_action('admin_menu', 'icp_plugin_settings');
@@ -103,7 +103,7 @@ function icp_shortcode($atts){
 			'class' => ' wpteam_instagram_photo',
 			'style' => 'no'
 		), $atts )
-	);	
+	);
 
 	$settings = get_option( "icp_settings" );
 
@@ -114,7 +114,7 @@ function icp_shortcode($atts){
 
 	$icp_html = '';
 
-	$icp_photos_query = new WP_Query( $args );	
+	$icp_photos_query = new WP_Query( $args );
 
 	if ( $icp_photos_query->have_posts() ) {
 	    $icp_html = '<div class="wp-instagram-grid">';
@@ -142,7 +142,7 @@ function icp_shortcode($atts){
 	}
 
 	if($style==='yes'):
-		wp_enqueue_style( 'icp_grid', plugins_url('css/icp-grid.css', __FILE__) );	
+		wp_enqueue_style( 'icp_grid', plugins_url('css/icp-grid.css', __FILE__) );
 	endif;
 
 	if($lightbox==='yes'):
@@ -177,7 +177,7 @@ function my_add_oneminute( $schedules ) {
 	return $schedules;
 }
 
-add_filter( 'cron_schedules', 'my_add_oneminute' ); 
+add_filter( 'cron_schedules', 'my_add_oneminute' );
 
 // General Settings Pages
 function icp_plugin_settings() {
@@ -200,22 +200,22 @@ function icp_load_settings_page() {
 function icp_save_theme_settings() {
 	global $pagenow;
 	$settings = get_option( "icp_settings" );
-	
-	if ( $pagenow == 'admin.php' && $_GET['page'] == 'insta_team' ){ 
-		if ( isset ( $_GET['tab'] ) )
-	        $tab = $_GET['tab']; 
-	    else
-	        $tab = 'homepage'; 
 
-	    switch ( $tab ){ 
+	if ( $pagenow == 'admin.php' && $_GET['page'] == 'insta_team' ){
+		if ( isset ( $_GET['tab'] ) )
+	        $tab = $_GET['tab'];
+	    else
+	        $tab = 'homepage';
+
+	    switch ( $tab ){
 	        case 'homepage' :
 				$settings['icp_user'] 			= $_POST['icp_user'];
 				$settings['icp_user_id'] 		= $_POST['icp_user_id'];
 				$settings['icp_hashtag'] 		= $_POST['icp_hashtag'];
 				$settings['icp_public_hashtag'] = $_POST['icp_public_hashtag'];
-			break; 
-	        case 'post_type' : 
-	        	
+			break;
+	        case 'post_type' :
+
 	        	$old_interval = $settings['icp_import_interval'];
 
 				$settings['icp_post_type'] 				= $_POST['icp_post_type'];
@@ -242,8 +242,8 @@ function icp_save_theme_settings() {
 }
 
 
-function icp_admin_tabs( $current = 'homepage' ) { 
-    $tabs = array( 'homepage' => __('Hashtags & Users','insta_team') , 'post_type' => __('Import Options','insta_team'), 'shortcode'=> __('Shortcodes','insta_team'),  'unlink'=> __('Unlink Account','insta_team'), 'help' => __('Help','insta_team') ); 
+function icp_admin_tabs( $current = 'homepage' ) {
+    $tabs = array( 'homepage' => __('Hashtags & Users','insta_team') , 'post_type' => __('Import Options','insta_team'), 'shortcode'=> __('Shortcodes','insta_team'),  'unlink'=> __('Unlink Account','insta_team'), 'help' => __('Help','insta_team') );
     $links = array();
     echo '<h2 class="nav-tab-wrapper icpNavTab">';
     foreach( $tabs as $tab => $name ){
@@ -294,7 +294,7 @@ If you would like to keep up to date regarding InstaTeam Instagram Importer plug
         )
     );
     return $p;
-}	
+}
 
 function icp_display_settings() {
 
@@ -317,7 +317,7 @@ function icp_display_settings() {
 
 
 	?>
-	
+
 	<div class="wrap">
 		<h2 id="icpwelcomeTitle"><?php echo ICP_PLUGIN_NAME; ?></h2>
 
@@ -332,19 +332,19 @@ function icp_display_settings() {
 
 					$updated = update_option( "icp_settings", $settings );
 		?>
-			<div id="setting-error-settings_updated" class="updated settings-error"> 
+			<div id="setting-error-settings_updated" class="updated settings-error">
 				<p><strong><?php _e('Your instagram access token was deleted, but you also need to revoke permissions from this plugin, <a href="https://instagram.com/accounts/manage_access" target="_blank">click here</a> and revoke access to the "InstaTeam Instagram Importer" app.', 'insta_team' ); ?></strong></p>
 			</div>
 		<?php
 				endif;
 			endif;
 		?>
-		
+
 		<?php
 			if (isset($_GET['updated']))
 			if ( 'true' == esc_attr( $_GET['updated'] ) ):
 		?>
-		<div id="setting-error-settings_updated" class="updated settings-error"> 
+		<div id="setting-error-settings_updated" class="updated settings-error">
 			<p><strong><?php _e('Settings saved.', 'insta_team' ); ?></strong></p>
 		</div>
 		<?php
@@ -352,8 +352,8 @@ function icp_display_settings() {
 		?>
 
 		<?php if(isset($_GET['icp_auth'])): ?>
-			<?php 
-				if($_GET['icp_auth']==='success'): 
+			<?php
+				if($_GET['icp_auth']==='success'):
 
 					$settings = get_option( "icp_settings" );
 					$settings['icp_auth'] = 'yes';
@@ -363,11 +363,11 @@ function icp_display_settings() {
 
 					$updated = update_option( "icp_settings", $settings );
 			?>
-				<div id="setting-error-settings_updated" class="updated settings-error"> 
+				<div id="setting-error-settings_updated" class="updated settings-error">
 					<p><strong><?php _e( 'Authorization succeeded!', 'insta_team' ); ?></strong></p>
 				</div>
 			<?php else: ?>
-				<div id="setting-error-settings_updated" class="error settings-error"> 
+				<div id="setting-error-settings_updated" class="error settings-error">
 					<p><strong><?php _e( 'There was an error, try again...', 'insta_team' ); ?></strong></p>
 				</div>
 			<?php endif; ?>
@@ -392,18 +392,18 @@ function icp_display_settings() {
 				<form class="icp_settings_form" method="post" action="<?php admin_url( 'admin.php?page=insta_team' ); ?>">
 
 				<?php
-					wp_nonce_field( "icp-settings-page" ); 
-				
-					if ( $pagenow == 'admin.php' && $_GET['page'] == 'insta_team' ){ 
-					
-						if ( isset ( $_GET['tab'] ) ) $tab = $_GET['tab']; 
-						else $tab = 'homepage'; 
-						
+					wp_nonce_field( "icp-settings-page" );
+
+					if ( $pagenow == 'admin.php' && $_GET['page'] == 'insta_team' ){
+
+						if ( isset ( $_GET['tab'] ) ) $tab = $_GET['tab'];
+						else $tab = 'homepage';
+
 						echo '<table id="icpMainTable" class="form-table">';
 						$no_save = false;
 						switch ( $tab ){
 							case 'homepage' :
-							
+
 							$icp_total_users = count($icp_user);
 
 					?>
@@ -424,15 +424,15 @@ function icp_display_settings() {
 								$user_id = ( isset($icp_user_id[$i-1]) ? $icp_user_id[$i-1] : '' );
 								$hashtag = ( isset($icp_hashtag[$i-1]) ? $icp_hashtag[$i-1] : '' );
 
-								
+
 								if( ( !empty($user) && !empty($user_id) ) ):
 									$active_users++;
 					?>
-								
+
 								<tr valign="top" class="icp_user_hashtag">
 									<td scope="row">
 
-										<table class="form-table icp-hover-table"> 
+										<table class="form-table icp-hover-table">
 											<tr valign="top">
 												<td scope="row"><label><?php _e('Instagram Username:','insta_team'); ?></label></th>
 												<td>
@@ -456,18 +456,18 @@ function icp_display_settings() {
 													<p class="description"><?php _e( 'Insert the hashtags without # and separated by comma, don\'t use blank spaces.', 'insta_team' ); ?></p>
 												</td>
 											</tr>
-											
+
 										</table>
 
 									</td>
-									
+
 								</tr>
 								<tr valign="top" class="icp_user_tr">
 									<td colspan="2">
 										<hr>
 									</td>
 								</tr>
-											
+
 					<?php
 								endif;
 							endfor;
@@ -477,7 +477,7 @@ function icp_display_settings() {
 								<tr valign="top" class="icp_user_hashtag hidden">
 									<td scope="row">
 
-										<table class="form-table icp-hover-table"> 
+										<table class="form-table icp-hover-table">
 											<tr valign="top">
 												<td scope="row"><label><?php _e('Instagram Username:','insta_team'); ?></label></th>
 												<td>
@@ -501,11 +501,11 @@ function icp_display_settings() {
 													<p class="description"><?php _e( 'Insert the hashtags without # and separated by comma, don\'t use blank spaces.', 'insta_team' ); ?></p>
 												</td>
 											</tr>
-											
+
 										</table>
 
 									</td>
-									
+
 								</tr>
 								<tr valign="top" class="icp_user_tr hidden">
 									<td colspan="2">
@@ -552,12 +552,12 @@ function icp_display_settings() {
 											</tr>
 										</table>
 									</td>
-												
+
 								</tr>
-								
+
 								<?php
-							break; 
-							case 'post_type' : 
+							break;
+							case 'post_type' :
 								?>
 								<tr valign="top">
 									<th colspan="2">
@@ -574,7 +574,7 @@ function icp_display_settings() {
 												   'public'   => true
 												);
 
-												$post_types = get_post_types( $args ); 
+												$post_types = get_post_types( $args );
 												$current_post_type = isset( $icp_post_type ) ? $icp_post_type : '';
 												foreach ( $post_types  as $post_type ):
 											?>
@@ -675,8 +675,8 @@ function icp_display_settings() {
 								</tr>
 								<?php
 							break;
-							
-							case 'shortcode' : 
+
+							case 'shortcode' :
 								$no_save = true;
 								?>
 								<tr valign="top">
@@ -685,50 +685,50 @@ function icp_display_settings() {
 										<p><?php _e( 'This plugin supports <a href="http://codex.wordpress.org/Shortcode_API" target="_blank">shortcodes</a>. Include the shortcode [insta_team] in any page where you want your photo grid to appear.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
-								
+
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'Controlling the number of photos to display', 'insta_team' ); ?></label></th>
 									<td>
 										<p><?php _e( 'There is an option to limit the number of photos that appear in the grid (showing the newest first). You can enable this functionality by including photos=x in the shortcode.', 'insta_team' ); ?></p>
-										 
+
 										<p><?php _e( 'Example: <br /><br /><b>[insta_team photos=12]', 'insta_team' ); ?></b></p><br />
 									</td>
 								</tr>
-								
+
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'Adding a CSS class to the shortcode', 'insta_team' ); ?></label></th>
-									<td>		 
+									<td>
 										<p><?php _e( 'There is also an option to add a custom class to the images. You can enable this by adding class=somecustomclass to the shortcode. A custom class is helpful for adding things like floats and other CSS to support responsive grids.', 'insta_team' ); ?></p>
-										 
+
 										<p><?php _e( 'Example: <br /><br /><b>[insta_team photos=12 class=some_custom_class]', 'insta_team' ); ?></b></p>
 									</td>
 								</tr>
 
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'Add a CSS Grid ', 'insta_team' ); ?></label></th>
-									<td>		 
+									<td>
 										<p><?php _e( 'Adding this option to your shortcode will convert your photos into a 4 column responsive grid.', 'insta_team' ); ?></p>
-										 
+
 										<p><?php _e( 'Example: <br /><br /><b>[insta_team photos=12 style=yes]', 'insta_team' ); ?></b></p>
 									</td>
 								</tr>
 
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'Add a Lightbox ', 'insta_team' ); ?></label></th>
-									<td>		 
+									<td>
 										<p><?php _e( 'Use this shortcode to tell the plugin if you want users to be able to click on a larger version of the photo.', 'insta_team' ); ?></p>
-										 
+
 										<p><?php _e( 'Example: <br /><br /><b>[insta_team photos=12 lightbox=yes]', 'insta_team' ); ?></b></p>
 									</td>
 								</tr>
 
-								
+
 								<?php
 							break;
-							
-							case 'help' : 
+
+							case 'help' :
 								$no_save = true;
-							?>	
+							?>
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'Product Suggestions', 'insta_team' ); ?></label></th>
 									<td>
@@ -757,11 +757,11 @@ function icp_display_settings() {
 									<th scope="row"><label><?php _e( 'License Info', 'insta_team' ); ?></label></th>
 									<td>
 										<p><?php _e( 'We are releasing this plugin under the same license that WordPress is released on: GPLv2 (or later) from the <a href="http://www.fsf.org/" target="_blank">Free Software Foundation</a>. A copy of the license is included with every copy of WordPress, but you can also read <a href="http://www.gnu.org/licenses/gpl-2.0.html" target="_blank">the text of the license here</a>.', 'insta_team' ); ?></p>
- 
+
 										<p><?php _e( 'Part of this license outlines requirements for derivative works, such as plugins or themes. Derivatives of this plugin inherit the GPL license. <a href="http://www.drupal.org/" target="_blank">Drupal</a>, which has the same GPL license as WordPress, has an excellent page on licensing as it applies to themes and modules (their word for plugins).', 'insta_team' ); ?></p>
 									</td>
 								</tr>
-										
+
 								<tr valign="top">
 									<td colspan="2">
 										<hr>
@@ -769,9 +769,9 @@ function icp_display_settings() {
 								</tr>
 							<?php
 							break;
-							case 'unlink' : 
+							case 'unlink' :
 								$no_save = true;
-							?>	
+							?>
 								<tr valign="top">
 									<td colspan="2">
 										<h2><?php _e( 'Unlink Your Instagram Account', 'insta_team' ); ?></h2>
@@ -781,13 +781,13 @@ function icp_display_settings() {
 										<a href="admin.php?page=insta_team&unlink=true" id="icp-unlinkAccount" class="button-primary red"><?php _e( 'Unlink Instagram Account', 'insta_team' ); ?></a>
 									</td>
 								</tr>
-								
+
 							<?php
 							break;
 						}
 						echo '</table>';
 					}
-				
+
 					?>
 					<p class="submit" style="clear: both;">
 						<?php if($no_save!==true): ?>
@@ -797,16 +797,16 @@ function icp_display_settings() {
 					</p>
 
 				</form>
-				
+
 			</div>
 		<?php
 			endif;
 		?>
 	</div>
-<?php	
+<?php
 }
 
-function icp_get_current_url() {	
+function icp_get_current_url() {
 	// As seen on http://stackoverflow.com/a/1229924/789960
 	if($_SERVER["SERVER_NAME"]!==''):
 		$pageURL = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
@@ -816,18 +816,18 @@ function icp_get_current_url() {
 		    $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 		}
 		$pageURL = icp_remove_querystring_var($pageURL, 'unlink');
-	else:		
+	else:
 		$pageURL = get_bloginfo('url').'/wp-admin/admin.php?page=insta_team';
 	endif;
 
 	return urlencode($pageURL);
 }
 
-function icp_remove_querystring_var($url, $key) { 
+function icp_remove_querystring_var($url, $key) {
 	// As seen on http://davidwalsh.name/php-remove-variable
-	$url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&'); 
-	$url = substr($url, 0, -1); 
-	return $url; 
+	$url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
+	$url = substr($url, 0, -1);
+	return $url;
 }
 
 add_action('wp_ajax_icp_check_user_id', 'icp_check_user_id');
@@ -838,24 +838,24 @@ function icp_check_user_id() {
 		echo 'false';
 		die();
 	endif;
-		
-	$username = strtolower($_POST['username']); 
+
+	$username = strtolower($_POST['username']);
 	$settings = get_option( "icp_settings" );
     $token = $settings['icp_access_token'];
     $url = "https://api.instagram.com/v1/users/search?q=".$username."&access_token=".$token;
-    
-	if(function_exists('curl_init')) {  
-        $ch = curl_init();  
-        curl_setopt($ch, CURLOPT_URL,$url);  
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);  
-        curl_setopt($ch, CURLOPT_HEADER, 0);  
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);  
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);   
-        $output = curl_exec($ch); 
-        curl_close($ch);  
-    } else{  
-        $output = file_get_contents($url);  
-    }  
+
+	if(function_exists('curl_init')) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        $output = curl_exec($ch);
+        curl_close($ch);
+    } else{
+        $output = file_get_contents($url);
+    }
 
     $json = json_decode($output);
 
@@ -872,17 +872,17 @@ function icp_check_user_id() {
     			echo 'alert';
             	die();
     		endif;
-            
+
         }
     endforeach;
 
-    echo 'false';	
-    die(); 
-    
+    echo 'false';
+    die();
+
 }
 
 function icp_get_user_photos(){
-	
+
 	global $wpdb;
 	global $post;
 
@@ -902,7 +902,7 @@ function icp_get_user_photos(){
     	if( !empty ( $insta_users ) ) :
 
     		$counter = 0;
-    		foreach( $insta_users as $insta_user ) : 
+    		foreach( $insta_users as $insta_user ) :
 
 		        if(isset($insta_hashtags[$counter])):
 		            if($insta_hashtags[$counter]===''):
@@ -921,13 +921,13 @@ function icp_get_user_photos(){
 
 		   		for($i=1; $i<=$page_num; $i++):
 
-		   			if($next_id===''): 
-		   				
+		   			if($next_id===''):
+
 		   				foreach ($media->data as $data):
-		   					
-							$new_post = array();							
-			                $new_post["id"] = $data->id;		
-			               
+
+							$new_post = array();
+			                $new_post["id"] = $data->id;
+
 			                if($data->type === 'image'):
 
 				                $photo_desc = strtolower($data->caption->text);
@@ -935,16 +935,16 @@ function icp_get_user_photos(){
 				                if(!empty($hashtags_per_user)):
 
 					                foreach($hashtags_per_user as $hashtag):
-					                	
+
 
 					                	$hashtag = '#'.strtolower($hashtag);
 
 					                	if (strpos($photo_desc, $hashtag) !== false):
-					                		
+
 											(string) $sql = "SELECT meta_id FROM ".$wpdb->postmeta." WHERE meta_value = '".$new_post["id"]."' AND meta_key = 'id'";
 
 											if($wpdb->get_var($sql) == NULL):
-												
+
 							                	$new_post["post_title"]  	= strip_tags($data->caption->text);
 							                	$new_post["post_content"]	= '<img src="'.$data->images->standard_resolution->url.'" />';
 							                	$new_post["post_type"]    	= $settings['icp_post_type'];
@@ -976,7 +976,7 @@ function icp_get_user_photos(){
 				                	(string) $sql = "SELECT meta_id FROM ".$wpdb->postmeta." WHERE meta_value = '".$new_post["id"]."' AND meta_key = 'id'";
 
 									if($wpdb->get_var($sql) == NULL):
-										
+
 					                	$new_post["post_title"]  	= strip_tags($data->caption->text);
 					                	$new_post["post_content"]	= '<img src="'.$data->images->standard_resolution->url.'" />';
 					                	$new_post["post_type"]    	= $settings['icp_post_type'];
@@ -999,23 +999,23 @@ function icp_get_user_photos(){
 					                	endif;
 
 									endif;
-								
+
 								endif;
 
 							endif;
-		               
+
 			            endforeach;
 
-		   			else: 
+		   			else:
 
     					$media = $instagram->pagination($media);
 
 						foreach ($media->data as $data):
-							
-							$new_post = array();							
-			                $new_post["id"]     		= $data->id;	
-			                
-			                if($data->type === 'image'):		            	
+
+							$new_post = array();
+			                $new_post["id"]     		= $data->id;
+
+			                if($data->type === 'image'):
 
 				                $photo_desc = strtolower($data->caption->text);
 
@@ -1025,9 +1025,9 @@ function icp_get_user_photos(){
 					                	$hashtag = '#'.strtolower($hashtag);
 
 					                	$hashtag_photo_counter++;
-					                	
+
 					                	if (strpos($photo_desc, $hashtag) !== false):
-									    	
+
 											(string) $sql = "SELECT meta_id FROM ".$wpdb->postmeta." WHERE meta_value = '".$new_post["id"]."' AND meta_key = 'id'";
 
 											if($wpdb->get_var($sql) == NULL):
@@ -1086,11 +1086,11 @@ function icp_get_user_photos(){
 					                	endif;
 
 									endif;
-								
+
 								endif;
-							
+
 							endif;
-		               
+
 			            endforeach;
 
 		   			endif;
@@ -1114,7 +1114,7 @@ function icp_get_user_photos(){
 }
 
 function icp_get_hashtag_photos(){
-	
+
 	global $wpdb;
 	global $post;
 
@@ -1133,24 +1133,24 @@ function icp_get_hashtag_photos(){
     	if( !empty ( $hashtags ) ) :
 
     		$counter = 0;
-    		foreach( $hashtags as $hashtag ) : 
+    		foreach( $hashtags as $hashtag ) :
 
     			if(empty($hashtag)):
     				break;
     			endif;
-    			
+
     			$media = $instagram->getTagMedia($hashtag);
 		   		$next_id = '';
 
 		   		for($i=1; $i<=$page_num; $i++):
 
-		   			if($next_id===''): 
+		   			if($next_id===''):
 
 		   				foreach ($media->data as $data):
 
-							$new_post = array();							
-			                $new_post["id"]     		= $data->id;			    
-			                
+							$new_post = array();
+			                $new_post["id"]     		= $data->id;
+
 			                if($data->type === 'image'):
 
 			                	(string) $sql = "SELECT meta_id FROM ".$wpdb->postmeta." WHERE meta_value = '".$new_post["id"]."' AND meta_key = 'id'";
@@ -1181,18 +1181,18 @@ function icp_get_hashtag_photos(){
 								endif;
 
 							endif;
-		               
+
 			            endforeach;
-		   			else: 
+		   			else:
 
     					$media = $instagram->pagination($media);
 
 						foreach ($media->data as $data):
 
-							$new_post = array();							
-			                $new_post["id"]     		= $data->id;	
-			                
-			                if($data->type === 'image'):		            	
+							$new_post = array();
+			                $new_post["id"]     		= $data->id;
+
+			                if($data->type === 'image'):
 
 				                (string) $sql = "SELECT meta_id FROM ".$wpdb->postmeta." WHERE meta_value = '".$new_post["id"]."' AND meta_key = 'id'";
 
@@ -1220,9 +1220,9 @@ function icp_get_hashtag_photos(){
 				                	endif;
 
 								endif;
-							
+
 							endif;
-		               
+
 			            endforeach;
 
 		   			endif;
@@ -1278,40 +1278,40 @@ function icp_upload_image($url, $post_id){
 }
 
 add_action( 'admin_enqueue_scripts', 'icp_pointer_load', 1000 );
- 
+
 function icp_pointer_load( $hook_suffix ) {
- 
+
     if ( get_bloginfo( 'version' ) < '3.3' )
         return;
- 
+
     $screen = get_current_screen();
     $screen_id = $screen->id;
- 
+
     $pointers = apply_filters( 'icp_admin_pointers-' . $screen_id, array() );
- 
+
     if ( ! $pointers || ! is_array( $pointers ) )
         return;
- 
+
     $dismissed = explode( ',', (string) get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
     $valid_pointers =array();
- 
+
     foreach ( $pointers as $pointer_id => $pointer ) {
- 
+
         if ( in_array( $pointer_id, $dismissed ) || empty( $pointer )  || empty( $pointer_id ) || empty( $pointer['target'] ) || empty( $pointer['options'] ) )
             continue;
- 
+
         $pointer['pointer_id'] = $pointer_id;
- 
+
         $valid_pointers['pointers'][] =  $pointer;
     }
- 
+
     if ( empty( $valid_pointers ) )
         return;
- 
+
     wp_enqueue_style( 'wp-pointer' );
- 
+
     wp_enqueue_script( 'icp-pointer', plugins_url( 'js/icp-pointer.js', __FILE__ ), array( 'wp-pointer' ) );
- 
+
     wp_localize_script( 'icp-pointer', 'icpPointer', $valid_pointers );
 }
 
@@ -1323,7 +1323,7 @@ function icp_flush_rewrite_rules() {
 
 function icp_check_empty_fields(){
 	$settings = get_option('icp_settings');
-	
+
 	if( empty($settings['icp_public_hashtag'][0]) && empty($settings['icp_user_id'][0]) ):
 		return __( 'You need to', 'insta_team').'<a href="'.get_admin_url('','admin.php?page=insta_team').'">'.__('add your first team member', 'insta_team' ).'</a>';
 	else:
@@ -1339,39 +1339,37 @@ function icp_photo_post_type_init() {
 	$icp_post_singular = ( isset($settings['icp_rename_post_singular']) ? $settings['icp_rename_post_singular'] : 'Photo' );
 	$icp_post_plural   = ( isset($settings['icp_rename_post_plural']) ? $settings['icp_rename_post_plural'] : 'Photos' );
 
-	register_post_type( ICP_POST_TYPE, 
+	register_post_type( ICP_POST_TYPE,
 
-		array( 
+		array(
 			'labels' => array(
 				'name' => __( 'InstaTeam Pics', 'insta_team' ),
-				'singular_name' => __( 'InstaTeam Pic', 'insta_team' ), 
-				'all_items' => __( 'All InstaTeam Pics', 'insta_team' ), 
+				'singular_name' => __( 'InstaTeam Pic', 'insta_team' ),
+				'all_items' => __( 'All InstaTeam Pics', 'insta_team' ),
 				'add_new' => __( 'Add New', 'insta_team' ),
-				'add_new_item' => __( 'Add New InstaTeam Pic', 'insta_team' ), 
+				'add_new_item' => __( 'Add New InstaTeam Pic', 'insta_team' ),
 				'edit' => __( 'Edit', 'insta_team' ),
-				'edit_item' => __( 'Edit InstaTeam Pics', 'insta_team' ), 
-				'new_item' => __( 'New InstaTeam Pic', 'insta_team' ), 
-				'view_item' => __( 'View InstaTeam Pic', 'insta_team' ), 
-				'search_items' => __( 'Search InstaTeam Pics', 'insta_team' ), 
+				'edit_item' => __( 'Edit InstaTeam Pics', 'insta_team' ),
+				'new_item' => __( 'New InstaTeam Pic', 'insta_team' ),
+				'view_item' => __( 'View InstaTeam Pic', 'insta_team' ),
+				'search_items' => __( 'Search InstaTeam Pics', 'insta_team' ),
 				'not_found' =>  icp_check_empty_fields(),
-				'not_found_in_trash' => __( 'Nothing found in Trash', 'insta_team' ), 
+				'not_found_in_trash' => __( 'Nothing found in Trash', 'insta_team' ),
 				'parent_item_colon' => ''
-			), 
-			'description' => __( 'This is the custom post type for the Instagram photos', 'insta_team' ), 
+			),
+			'description' => __( 'This is the custom post type for the Instagram photos', 'insta_team' ),
 			'public' => true,
 			'publicly_queryable' => true,
 			'exclude_from_search' => false,
 			'show_ui' => true,
 			'query_var' => true,
-			'menu_position' => 8, 
+			'menu_position' => 8,
 			'rewrite'	=> array( 'slug' => 'instagram_wpteams', 'with_front' => false ),
 			'has_archive' => 'wpteam_instagram_photos',
 			'capability_type' => 'post',
 			'hierarchical' => false,
 			'supports' => array( 'title', 'editor', 'thumbnail' )
-		) 
-	); 
+		)
+	);
 
 }
-
-
