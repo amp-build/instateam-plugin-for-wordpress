@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: InstaTeam Instagram Importer
-Plugin URI: http://spark6.com
+Plugin URI: http://amp.build
 Description: This plugin makes it possible to import a whitelist of Instagram users and tagged photos into your Wordpress blog as Custom Post Types, then display those photos anywhere on your site using the shortcode “insta_team photos”.
-Author URI: http://spark6.com
-Author: SPARK6
+Author URI: http://amp.build
+Author: AMP.build, LLC
 Version: 1.1
 */
 
@@ -261,31 +261,13 @@ function icp_register_pointer_welcome( $p ) {
             'content' => sprintf( '<h3> %s </h3> <p> %s </p>',
                 __( 'Thanks for choosing InstaTeam!' ,'insta_team'),
                 __( '<p><b>About This Plugin</b><br />
-This plugin was created by SPARK6, a creative agency located in Santa Monica, Ca. We believe in leveraging technology to reduce human suffering. Learn more at <a href="http://www.spark6.com" target="_blank">www.spark6.com</a>. If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@spark6.com">hello@spark6.com</a>.</p>
+This plugin was created by AMP.build, a creative agency located in Chico, Ca. Learn more at <a href="http://www.amp.build" target="_blank">www.amp.build</a>. If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@amp.build">hello@amp.build</a>.</p>
 
 <p><b>Like this plugin?</b><br />
 If you like this plugin, please rate it 5 stars on Wordpress.org! We hope you do!</p>
 
 <p><b>Contribute!</b><br />
 If you would like to extend the functionality of InstaTeam Instagram Importer and are a developer, head over to our Github repository to download the full source code.</p>
-
-<p><b>Stay Updated</b><br />
-If you would like to keep up to date regarding InstaTeam Instagram Importer plugin and other plugins by SPARK6, subscribe to our newsletter:</p>
-<!-- Begin MailChimp Signup Form -->
-
-<div id="mc_embed_signup">
-
-	<form id="mc-form" style="padding:15px;" action="http://spark6.us8.list-manage.com/subscribe/post?u=3f570c3013887ad5074dec610&amp;id=8456f2c27c" method="post">
-		<p class="mc-response"></p>
-	    <input id="mce-EMAIL" name="EMAIL" type="email" placeholder="email">
-	    <label for="mce-EMAIL"></label>
-
-	    <br><br>
-	    <div style="position: absolute; left: -5000px;"><input type="text" name="b_3f570c3013887ad5074dec610_8456f2c27c" value=""></div>
-	    <input type="button" id="mcSubmit" class="button" value="Submit">
-	</form>
-
-</div>
 
 <!--End mc_embed_signup-->
 	','insta_team')
@@ -732,7 +714,7 @@ function icp_display_settings() {
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'Product Suggestions', 'insta_team' ); ?></label></th>
 									<td>
-										<p><?php _e( 'If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@spark6.com">hello@spark6.com</a>.', 'insta_team' ); ?></p>
+										<p><?php _e( 'If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@amp.build">hello@amp.build</a>.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
 								<tr valign="top">
@@ -750,7 +732,7 @@ function icp_display_settings() {
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'About This Plugin:', 'insta_team' ); ?></label></th>
 									<td>
-										<p><?php _e( 'This plugin was created and is maintained by SPARK6, is a creative agency located in Santa Monica, Ca. We believe in leveraging technology to further social innovation. Learn more at <a href="http://www.spark6.com/about-us" target="_blank">www.spark6.com</a> and be sure to Like Us on <a href="https://www.facebook.com/spark6agency" target="_blank">Facebook</a>.', 'insta_team' ); ?></p>
+										<p><?php _e( 'This plugin was created and is maintained by AMP.build, is a creative agency located in Chico, Ca. Learn more at <a href="http://www.amp.build" target="_blank">www.amp.build</a> and be sure to Like Us on <a href="https://www.facebook.com/ampdotbuild" target="_blank">Facebook</a>.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
 								<tr valign="top">
