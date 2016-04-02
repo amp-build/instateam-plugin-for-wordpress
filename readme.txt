@@ -1,5 +1,5 @@
 === InstaTeam Instagram Importer ===
-Contributors: SPARK6, abrudtkuhl
+Contributors: AMP.build, chadalderson, drewwitmer, abrudtkuhl
 Donate link: Free
 Tags: instagram, import, teams, photo, gallery
 Requires at least: 3.0.1
@@ -12,7 +12,7 @@ Import a whitelist of Instagram users and hashtagged photos into Wordpress!
 
 == Description ==
 
-We built this plugin out of necessity. Our agency, SPARK6, has a team distributed all over the word. Instagram is a perfect way for us to convey company culture by allowing the team to post photos with the #spark6 hashtag for anything they would like surfaced on the company site.
+We built this plugin out of necessity. Our agency, AMP.build, has a team distributed all over the word. Instagram is a perfect way for us to convey company culture by allowing the team to post photos with the #ampbuild hashtag for anything they would like surfaced on the company site.
 
 If you are looking for a plugin that will allow you to consolidate posts from one or more Instagram users on your Wordpress blog then this is the plugin for you!
 
