@@ -714,13 +714,13 @@ function icp_display_settings() {
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'Product Suggestions', 'insta_team' ); ?></label></th>
 									<td>
-										<p><?php _e( 'If you have any suggestions on how this plugin can be improved please feel free to contact us at <a href="mailto:hello@amp.build">hello@amp.build</a>.', 'insta_team' ); ?></p>
+										<p><?php _e( 'If you have any suggestions on how this plugin can be improved please <a href="https://github.com/amp-build/instateam-plugin-for-wordpress/issues">post it here as a GitHub issue</a>.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
 								<tr valign="top">
 									<th scope="row"><label><?php _e( 'Support Forums', 'insta_team' ); ?></label></th>
 									<td>
-										<p><?php _e( 'If you need support please check out the [Plugin Forums for InstaTeam] on <a href="http://wordpress.org" target="_blank">Wordpress.org</a>', 'insta_team' ); ?></p>
+										<p><?php _e( 'If you need support please check out the [Plugin Forums for InstaTeam] on <a href="http://wordpress.org" target="_blank">Wordpress.org</a> or <a href="https://github.com/amp-build/instateam-plugin-for-wordpress/issues">check GitHub</a>.', 'insta_team' ); ?></p>
 									</td>
 								</tr>
 								<tr valign="top">
